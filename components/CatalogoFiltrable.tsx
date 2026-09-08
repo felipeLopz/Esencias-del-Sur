@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { CATEGORIAS, type Producto } from "@/data/productos";
 import ProductCard from "./ProductCard";
+import FiltroTabs from "./FiltroTabs";
 
 type Filtro = "Todos" | (typeof CATEGORIAS)[number];
 
@@ -13,7 +14,7 @@ export default function CatalogoFiltrable({
 }) {
   const [filtro, setFiltro] = useState<Filtro>("Todos");
 
-  const tabs: Filtro[] = ["Todos", ...CATEGORIAS];
+  const tabs: string[] = ["Todos", ...CATEGORIAS];
 
   const visibles = useMemo(
     () =>
@@ -23,67 +24,14 @@ export default function CatalogoFiltrable({
     [filtro, productos]
   );
 
-  // --- Indicador deslizante de los tabs (animación #5) ---
-  const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [ind, setInd] = useState<{
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  } | null>(null);
-
-  const medirIndicador = () => {
-    const el = btnRefs.current[filtro];
-    if (!el) return;
-    setInd({
-      left: el.offsetLeft,
-      top: el.offsetTop,
-      width: el.offsetWidth,
-      height: el.offsetHeight,
-    });
-  };
-
-  useLayoutEffect(medirIndicador, [filtro]);
-
-  useEffect(() => {
-    window.addEventListener("resize", medirIndicador);
-    return () => window.removeEventListener("resize", medirIndicador);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtro]);
-
   return (
     <div>
-      <div className="relative mb-8 inline-flex flex-wrap gap-3">
-        <span
-          aria-hidden="true"
-          className="tab-indicator"
-          style={
-            ind
-              ? {
-                  transform: `translate(${ind.left}px, ${ind.top}px)`,
-                  width: ind.width,
-                  height: ind.height,
-                }
-              : { opacity: 0 }
-          }
+      <div className="mb-8">
+        <FiltroTabs
+          tabs={tabs}
+          activo={filtro}
+          onChange={(t) => setFiltro(t as Filtro)}
         />
-        {tabs.map((tab) => {
-          const activo = tab === filtro;
-          return (
-            <button
-              key={tab}
-              ref={(el) => {
-                btnRefs.current[tab] = el;
-              }}
-              onClick={() => setFiltro(tab)}
-              className={`btn-pill label-ui relative z-10 px-5 py-2 text-sm transition-colors duration-200 ${
-                activo ? "text-azul-negro" : "text-blanco"
-              }`}
-            >
-              {tab}
-            </button>
-          );
-        })}
       </div>
 
       {visibles.length === 0 ? (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { formatearPrecio, type Producto } from "@/data/productos";
 import ProductImage from "./ProductImage";
-import ConsultarButton from "./ConsultarButton";
+import AgregarAlCarrito from "./AgregarAlCarrito";
 
 export default function ProductCard({ producto }: { producto: Producto }) {
   return (
@@ -30,17 +30,14 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           {producto.descripcion}
         </p>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex min-h-[34px] items-center justify-between gap-3">
           <div>
             <p className="text-lg text-blanco">
               {formatearPrecio(producto.precio)}
             </p>
             <p className="label-ui text-xs text-gris-azul">{producto.tamano}</p>
           </div>
-          {/* PLACEHOLDER: sin link a WhatsApp todavía */}
-          <ConsultarButton className="btn-pill btn-primario label-ui min-w-[104px] px-5 py-2 text-sm">
-            Consultar
-          </ConsultarButton>
+          <AgregarAlCarrito producto={producto} size="sm" />
         </div>
       </div>
     </article>

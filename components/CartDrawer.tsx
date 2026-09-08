@@ -1,0 +1,160 @@
+"use client";
+
+import { useEffect } from "react";
+import Link from "next/link";
+import { useCarrito } from "@/context/CarritoContext";
+import { formatearPrecio } from "@/data/productos";
+import { formatoLabel } from "@/lib/formato";
+import { linkPedidoWhatsApp } from "@/lib/whatsapp";
+
+// Drawer lateral (derecha) + overlay. Se monta una vez en el layout raíz y
+// anima con transform/opacity (neutralizado por prefers-reduced-motion global).
+export default function CartDrawer() {
+  const {
+    items,
+    total,
+    drawerAbierto,
+    cerrarDrawer,
+    actualizarCantidad,
+    quitar,
+  } = useCarrito();
+
+  // Escape para cerrar + bloqueo de scroll del body mientras está abierto.
+  useEffect(() => {
+    if (!drawerAbierto) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") cerrarDrawer();
+    };
+    window.addEventListener("keydown", onKeyDown);
+
+    const scrollPrevio = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = scrollPrevio;
+    };
+  }, [drawerAbierto, cerrarDrawer]);
+
+  return (
+    <>
+      <div
+        className="drawer-overlay"
+        data-abierto={drawerAbierto}
+        onClick={cerrarDrawer}
+        aria-hidden="true"
+      />
+
+      <aside
+        className="drawer-panel"
+        data-abierto={drawerAbierto}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Carrito de compras"
+      >
+        <header className="flex items-center justify-between border-b border-[var(--tarjeta-borde)] px-5 py-4">
+          <p className="font-cinzel text-lg text-blanco">Tu carrito</p>
+          <button
+            type="button"
+            onClick={cerrarDrawer}
+            className="label-ui text-sm text-gris-azul transition-colors hover:text-blanco"
+          >
+            Cerrar ✕
+          </button>
+        </header>
+
+        {items.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-5 px-6 text-center">
+            <p className="text-gris-azul">Tu carrito está vacío.</p>
+            <Link
+              href="/catalogo"
+              onClick={cerrarDrawer}
+              className="btn-pill btn-fill label-ui px-6 py-2 text-sm"
+            >
+              Ver catálogo
+            </Link>
+          </div>
+        ) : (
+          <>
+            <ul className="flex-1 divide-y divide-[var(--tarjeta-borde)] overflow-y-auto px-5">
+              {items.map(({ producto, cantidad }) => (
+                <li key={producto.id} className="flex gap-4 py-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="label-ui text-[11px] uppercase text-gris-azul">
+                      {producto.marca}
+                    </p>
+                    <p className="font-cinzel text-base text-blanco">
+                      <Link
+                        href={`/producto/${producto.slug}`}
+                        onClick={cerrarDrawer}
+                      >
+                        {producto.nombre}
+                      </Link>
+                    </p>
+                    <p className="label-ui mt-0.5 text-xs text-gris-azul">
+                      {formatoLabel(producto.formato)} · {producto.tamano}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => quitar(producto.id)}
+                      className="label-ui mt-2 text-xs text-gris-azul underline underline-offset-2 transition-colors hover:text-blanco"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col items-end justify-between gap-3">
+                    <p className="text-blanco">
+                      {formatearPrecio(producto.precio * cantidad)}
+                    </p>
+                    <div className="stepper-carrito">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          actualizarCantidad(producto.id, cantidad - 1)
+                        }
+                        aria-label={`Quitar una unidad de ${producto.nombre}`}
+                      >
+                        −
+                      </button>
+                      <span>{cantidad}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          actualizarCantidad(producto.id, cantidad + 1)
+                        }
+                        aria-label={`Agregar una unidad de ${producto.nombre}`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <footer className="border-t border-[var(--tarjeta-borde)] px-5 py-4">
+              <div className="mb-4 flex items-center justify-between">
+                <span className="label-ui text-sm uppercase tracking-wide text-gris-azul">
+                  Total
+                </span>
+                <span className="text-xl text-blanco">
+                  {formatearPrecio(total)}
+                </span>
+              </div>
+              <a
+                href={linkPedidoWhatsApp(items, total)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-pill btn-primario label-ui w-full px-6 py-3 text-base"
+              >
+                Finalizar pedido por WhatsApp
+              </a>
+            </footer>
+          </>
+        )}
+      </aside>
+    </>
+  );
+}

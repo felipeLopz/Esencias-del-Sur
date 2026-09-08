@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import ProductImage from "@/components/ProductImage";
-import ConsultarButton from "@/components/ConsultarButton";
+import AgregarAlCarrito from "@/components/AgregarAlCarrito";
 import {
   formatearPrecio,
   getProductoPorSlug,
@@ -93,11 +93,8 @@ export default async function ProductoPage({
                 </div>
               </div>
 
-              {/* PLACEHOLDER: sin link a WhatsApp todavía */}
               <div className="mt-10">
-                <ConsultarButton className="btn-pill btn-primario label-ui min-w-[240px] px-8 py-3 text-base">
-                  Consultar disponibilidad
-                </ConsultarButton>
+                <AgregarAlCarrito producto={producto} size="lg" />
               </div>
             </div>
           </div>

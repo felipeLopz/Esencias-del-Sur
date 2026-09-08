@@ -22,11 +22,32 @@ export const CATEGORIAS: Categoria[] = [
   "Sets regalo",
 ];
 
+export type Marca =
+  | "9PM"
+  | "Odyssey"
+  | "Khamrah"
+  | "Club de Nuit"
+  | "Badee Al Oud";
+
+export const MARCAS: Marca[] = [
+  "9PM",
+  "Odyssey",
+  "Khamrah",
+  "Club de Nuit",
+  "Badee Al Oud",
+];
+
+export type Formato = "tubo_35ml" | "grande_50ml" | "grande_100ml";
+
+export const FORMATOS: Formato[] = ["tubo_35ml", "grande_50ml", "grande_100ml"];
+
 export interface Producto {
   id: number;
   slug: string;
   nombre: string;
   categoria: Categoria;
+  marca: Marca;
+  formato: Formato;
   tamano: string;
   precio: number;
   imagen: string;
@@ -39,6 +60,8 @@ export const productos: Producto[] = [
     slug: "ambar-real",
     nombre: "Ámbar Real",
     categoria: "Oud & Ámbar",
+    marca: "Badee Al Oud",
+    formato: "grande_50ml",
     tamano: "50 ml",
     precio: 68000,
     imagen: "https://picsum.photos/seed/ambar-real/700/900",
@@ -50,6 +73,8 @@ export const productos: Producto[] = [
     slug: "oud-dorado",
     nombre: "Oud Dorado",
     categoria: "Oud & Ámbar",
+    marca: "Khamrah",
+    formato: "grande_100ml",
     tamano: "50 ml",
     precio: 82000,
     imagen: "https://picsum.photos/seed/oud-dorado/700/900",
@@ -61,6 +86,8 @@ export const productos: Producto[] = [
     slug: "noche-arabe",
     nombre: "Noche Árabe",
     categoria: "Oud & Ámbar",
+    marca: "Badee Al Oud",
+    formato: "tubo_35ml",
     tamano: "75 ml",
     precio: 91000,
     imagen: "https://picsum.photos/seed/noche-arabe/700/900",
@@ -72,6 +99,8 @@ export const productos: Producto[] = [
     slug: "rosa-del-desierto",
     nombre: "Rosa del Desierto",
     categoria: "Floral",
+    marca: "Odyssey",
+    formato: "grande_50ml",
     tamano: "50 ml",
     precio: 64000,
     imagen: "https://picsum.photos/seed/rosa-del-desierto/700/900",
@@ -83,6 +112,8 @@ export const productos: Producto[] = [
     slug: "jazmin-de-damasco",
     nombre: "Jazmín de Damasco",
     categoria: "Floral",
+    marca: "9PM",
+    formato: "grande_50ml",
     tamano: "50 ml",
     precio: 66000,
     imagen: "https://picsum.photos/seed/jazmin-de-damasco/700/900",
@@ -94,6 +125,8 @@ export const productos: Producto[] = [
     slug: "datil-y-sandalo",
     nombre: "Dátil & Sándalo",
     categoria: "Floral",
+    marca: "Khamrah",
+    formato: "grande_100ml",
     tamano: "75 ml",
     precio: 72000,
     imagen: "https://picsum.photos/seed/datil-y-sandalo/700/900",
@@ -105,6 +138,8 @@ export const productos: Producto[] = [
     slug: "almizcle-blanco",
     nombre: "Almizcle Blanco",
     categoria: "Fresco / Cítrico",
+    marca: "Club de Nuit",
+    formato: "tubo_35ml",
     tamano: "50 ml",
     precio: 58000,
     imagen: "https://picsum.photos/seed/almizcle-blanco/700/900",
@@ -116,6 +151,8 @@ export const productos: Producto[] = [
     slug: "citrico-real",
     nombre: "Cítrico Real",
     categoria: "Fresco / Cítrico",
+    marca: "Club de Nuit",
+    formato: "grande_100ml",
     tamano: "75 ml",
     precio: 61000,
     imagen: "https://picsum.photos/seed/citrico-real/700/900",
@@ -127,6 +164,8 @@ export const productos: Producto[] = [
     slug: "set-descubrimiento",
     nombre: "Set Descubrimiento",
     categoria: "Sets regalo",
+    marca: "9PM",
+    formato: "tubo_35ml",
     tamano: "5 × 8 ml",
     precio: 45000,
     imagen: "https://picsum.photos/seed/set-descubrimiento/700/900",

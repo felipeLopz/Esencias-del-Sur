@@ -255,7 +255,7 @@ h4 {
   }
 }
 
-/* 10. Botón "Consultar" — check de confirmación */
+/* 10. Botón agregar al carrito — check de confirmación */
 .check-pop {
   animation: check-pop 0.2s ease-out;
 }
@@ -268,6 +268,105 @@ h4 {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* ==========================================================================
+   CARRITO
+   ========================================================================== */
+
+/* Badge de cantidad en el ícono del Header */
+.badge-carrito {
+  position: absolute;
+  top: -6px;
+  right: -9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  background-color: var(--blanco);
+  color: var(--azul-negro);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 10px;
+  line-height: 1;
+}
+/* Sobre el botón flotante (pill blanco) el badge va invertido para contrastar */
+.badge-carrito--invertido {
+  background-color: var(--azul-negro);
+  color: var(--blanco);
+}
+
+/* Selector −/+ (tarjeta de producto y drawer) */
+.stepper-carrito {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--blanco);
+  border-radius: 30px;
+  overflow: hidden;
+  font-family: var(--font-eb-garamond), serif;
+  color: var(--blanco);
+}
+.stepper-carrito button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  line-height: 1;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.stepper-carrito button:hover {
+  background-color: var(--blanco);
+  color: var(--azul-negro);
+}
+.stepper-carrito span {
+  min-width: 28px;
+  text-align: center;
+  font-size: 14px;
+}
+.stepper-lg button {
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+}
+.stepper-lg span {
+  min-width: 40px;
+  font-size: 16px;
+}
+
+/* Drawer lateral + overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background-color: rgba(5, 11, 26, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.drawer-overlay[data-abierto="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100vw);
+  height: 100dvh;
+  background-color: var(--azul-negro);
+  border-left: 1px solid var(--tarjeta-borde);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+.drawer-panel[data-abierto="true"] {
+  transform: translateX(0);
 }
 
 /* ==========================================================================
@@ -301,5 +400,9 @@ h4 {
   }
   .tw-caret {
     display: none !important;
+  }
+  .drawer-overlay,
+  .drawer-panel {
+    transition: none !important;
   }
 }

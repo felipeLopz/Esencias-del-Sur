@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CartButton from "./CartButton";
 
 export default function Header() {
   return (
@@ -29,6 +30,7 @@ export default function Header() {
           >
             Destacados
           </Link>
+          <CartButton />
         </nav>
       </div>
     </header>

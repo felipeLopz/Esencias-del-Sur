@@ -1,14 +1,13 @@
-// Botón flotante — PLACEHOLDER.
-// Todavía sin funcionalidad de WhatsApp (href="#"). Se conecta en otra sesión.
+import CartButton from "./CartButton";
+
+// Botón flotante — segundo trigger del carrito.
+// Mantiene posición / tamaño / bounce de entrada (float-in) de antes; sólo
+// cambia el ícono (carrito) y la acción (abre el drawer vía CartButton).
 export default function BotonFlotante() {
   return (
-    <a
-      href="#"
-      aria-label="Consultar (próximamente)"
-      className="btn-pill btn-primario label-ui float-in fixed bottom-6 right-6 z-50 gap-2 px-5 py-3 text-sm shadow-lg shadow-black/40"
-    >
-      <span aria-hidden>💬</span>
-      Consultar
-    </a>
+    <CartButton
+      className="btn-pill btn-primario float-in fixed bottom-6 right-6 z-50 px-5 py-3 shadow-lg shadow-black/40"
+      badgeClassName="badge-carrito badge-carrito--invertido"
+    />
   );
 }

@@ -4,9 +4,10 @@ import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import ProductCard from "@/components/ProductCard";
 import CatalogoFiltrable from "@/components/CatalogoFiltrable";
+import MarcaSection, { FONDO_MARCA } from "@/components/MarcaSection";
 import Reveal from "@/components/Reveal";
 import TypewriterHeadline from "@/components/TypewriterHeadline";
-import { productos } from "@/data/productos";
+import { MARCAS, productos } from "@/data/productos";
 
 export default function Home() {
   const destacados = productos.slice(0, 3);
@@ -23,12 +24,11 @@ export default function Home() {
               Perfumería árabe de autor
             </p>
             <TypewriterHeadline
-              text="El lujo del desierto, en cada gota"
-              className="mx-auto max-w-3xl font-cinzel text-4xl leading-tight text-blanco sm:text-6xl"
+              text="Esencias del Sur"
+              className="mx-auto max-w-3xl font-cinzel text-5xl leading-tight text-blanco sm:text-7xl"
             />
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gris-azul sm:text-xl">
-              Oud, ámbar y florales opulentos. Fragancias intensas y duraderas,
-              seleccionadas para quienes buscan una firma inolvidable.
+            <p className="mx-auto mt-6 max-w-2xl text-xl text-gris-azul sm:text-2xl">
+              Tu perfumería de confianza
             </p>
             <div className="mt-10">
               <Link
@@ -57,6 +57,16 @@ export default function Home() {
             </div>
           </Reveal>
         </section>
+
+        {/* SECCIONES POR MARCA — orden fijo del array MARCAS.
+            Fondo fijo por marca (FONDO_MARCA, paleta existente). */}
+        {MARCAS.map((marca) => (
+          <MarcaSection
+            key={marca}
+            marca={marca}
+            className={FONDO_MARCA[marca]}
+          />
+        ))}
 
         {/* CATÁLOGO COMPLETO — azul-med */}
         <section id="catalogo" className="bg-azul-med">

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cinzel, Cormorant_Garamond, EB_Garamond } from "next/font/google";
 import "./globals.css";
+import { CarritoProvider } from "@/context/CarritoContext";
+import CartDrawer from "@/components/CartDrawer";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -39,7 +41,10 @@ export default function RootLayout({
       <body
         className={`${cinzel.variable} ${cormorant.variable} ${ebGaramond.variable}`}
       >
-        {children}
+        <CarritoProvider>
+          {children}
+          <CartDrawer />
+        </CarritoProvider>
       </body>
     </html>
   );
