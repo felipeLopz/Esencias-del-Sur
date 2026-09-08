@@ -3,14 +3,23 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import ProductCard from "@/components/ProductCard";
-import CatalogoFiltrable from "@/components/CatalogoFiltrable";
-import MarcaSection, { FONDO_MARCA } from "@/components/MarcaSection";
 import Reveal from "@/components/Reveal";
 import TypewriterHeadline from "@/components/TypewriterHeadline";
-import { MARCAS, productos } from "@/data/productos";
+import { productos } from "@/data/productos";
+import {
+  TAMANOS,
+  TAMANO_DETALLE,
+  TAMANO_LABEL,
+  filtrarPorTamano,
+  marcasConProductos,
+} from "@/lib/agrupacion";
 
 export default function Home() {
-  const destacados = productos.slice(0, 3);
+  // Selección curada de la Home: los productos con `destacado: true` en
+  // data/productos.ts. Si no hay ninguno marcado se caen los primeros 3, para
+  // que la Home no quede sin productos a la vista.
+  const marcados = productos.filter((p) => p.destacado === true);
+  const destacados = marcados.length > 0 ? marcados : productos.slice(0, 3);
 
   return (
     <>
@@ -58,28 +67,46 @@ export default function Home() {
           </Reveal>
         </section>
 
-        {/* SECCIONES POR MARCA — orden fijo del array MARCAS.
-            Fondo fijo por marca (FONDO_MARCA, paleta existente). */}
-        {MARCAS.map((marca) => (
-          <MarcaSection
-            key={marca}
-            marca={marca}
-            className={FONDO_MARCA[marca]}
-          />
-        ))}
-
-        {/* CATÁLOGO COMPLETO — azul-med */}
-        <section id="catalogo" className="bg-azul-med">
+        {/* ACCESOS POR TAMAÑO — azul-med.
+            Llevan a /catalogo con el filtro de tamaño ya aplicado. */}
+        <section id="tamanos" className="bg-azul-med">
           <Reveal className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-cinzel text-3xl text-blanco">
-              Catálogo completo
+              Explorá por tamaño
             </h2>
             <p className="mt-2 max-w-xl text-gris-azul">
-              Filtrá por categoría para encontrar tu próxima fragancia.
+              Todo el catálogo está organizado por tamaño y, dentro de cada uno,
+              por marca.
             </p>
 
-            <div className="mt-10">
-              <CatalogoFiltrable productos={productos} />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {TAMANOS.map((tamano) => {
+                const delTamano = filtrarPorTamano(productos, tamano);
+                const marcas = marcasConProductos(delTamano).length;
+
+                return (
+                  <Link
+                    key={tamano}
+                    href={`/catalogo?tamano=${tamano}`}
+                    className="tarjeta flex flex-col p-8"
+                  >
+                    <h3 className="font-cinzel text-2xl text-blanco">
+                      {TAMANO_LABEL[tamano]}
+                    </h3>
+                    <p className="label-ui mt-2 text-sm uppercase tracking-wide text-gris-azul">
+                      {TAMANO_DETALLE[tamano]}
+                    </p>
+                    <p className="mt-4 flex-1 text-gris-azul">
+                      {delTamano.length}{" "}
+                      {delTamano.length === 1 ? "fragancia" : "fragancias"} en{" "}
+                      {marcas} {marcas === 1 ? "marca" : "marcas"}.
+                    </p>
+                    <span className="btn-pill btn-fill label-ui mt-6 self-start px-6 py-2 text-sm">
+                      Ver {TAMANO_LABEL[tamano].toLowerCase()}
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </Reveal>
         </section>

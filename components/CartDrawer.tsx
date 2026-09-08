@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { useCarrito } from "@/context/CarritoContext";
 import { formatearPrecio } from "@/data/productos";
 import { formatoLabel } from "@/lib/formato";
+import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import { linkPedidoWhatsApp } from "@/lib/whatsapp";
 
 // Drawer lateral (derecha) + overlay. Se monta una vez en el layout raíz y
@@ -20,22 +20,7 @@ export default function CartDrawer() {
   } = useCarrito();
 
   // Escape para cerrar + bloqueo de scroll del body mientras está abierto.
-  useEffect(() => {
-    if (!drawerAbierto) return;
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") cerrarDrawer();
-    };
-    window.addEventListener("keydown", onKeyDown);
-
-    const scrollPrevio = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = scrollPrevio;
-    };
-  }, [drawerAbierto, cerrarDrawer]);
+  useOverlayCerrable(drawerAbierto, cerrarDrawer);
 
   return (
     <>

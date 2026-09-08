@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Cinzel, Cormorant_Garamond, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { CarritoProvider } from "@/context/CarritoContext";
+import { ComparadorProvider } from "@/context/ComparadorContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 import CartDrawer from "@/components/CartDrawer";
+import BarraComparacion from "@/components/BarraComparacion";
+import ComparadorModal from "@/components/ComparadorModal";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -31,20 +35,33 @@ export const metadata: Metadata = {
     "Fragancias árabes de autor: oud, ámbar, florales y notas frescas. Perfumería de nicho con estilo.",
 };
 
+// Resuelve el tema ANTES de pintar para evitar el flash: localStorage guardado
+// -> preferencia del sistema -> dark. Se ejecuta como script bloqueante.
+const scriptTema = `(function(){try{var k="esencias-del-sur:tema";var s=localStorage.getItem(k);var t=(s==="light"||s==="dark")?s:(window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");var e=document.documentElement;e.dataset.theme=t;e.style.colorScheme=t;}catch(err){document.documentElement.dataset.theme="dark";}})();`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: scriptTema }} />
+      </head>
       <body
         className={`${cinzel.variable} ${cormorant.variable} ${ebGaramond.variable}`}
       >
-        <CarritoProvider>
-          {children}
-          <CartDrawer />
-        </CarritoProvider>
+        <ThemeProvider>
+          <CarritoProvider>
+            <ComparadorProvider>
+              {children}
+              <CartDrawer />
+              <BarraComparacion />
+              <ComparadorModal />
+            </ComparadorProvider>
+          </CarritoProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

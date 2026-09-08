@@ -52,6 +52,10 @@ export interface Producto {
   precio: number;
   imagen: string;
   descripcion: string;
+  // Se muestra en la sección "Destacados" de la Home. Opcional: si no está,
+  // el producto no aparece ahí. Conviene mantener 3 marcados: es lo que llena
+  // justo la fila del grid de la Home (lg:grid-cols-3).
+  destacado?: boolean;
 }
 
 export const productos: Producto[] = [
@@ -67,6 +71,7 @@ export const productos: Producto[] = [
     imagen: "https://picsum.photos/seed/ambar-real/700/900",
     descripcion:
       "Ámbar cálido y resinoso sobre un fondo de vainilla y benjuí. Una estela envolvente que evoca los salones de un palacio del desierto al caer la tarde.",
+    destacado: true,
   },
   {
     id: 2,
@@ -106,6 +111,7 @@ export const productos: Producto[] = [
     imagen: "https://picsum.photos/seed/rosa-del-desierto/700/900",
     descripcion:
       "Rosa damascena y peonía sobre un lecho de almizcle y madera de cachemira. Floral opulento con un toque aterciopelado.",
+    destacado: true,
   },
   {
     id: 5,
@@ -145,6 +151,7 @@ export const productos: Producto[] = [
     imagen: "https://picsum.photos/seed/almizcle-blanco/700/900",
     descripcion:
       "Almizcle limpio y transparente con bergamota y notas de lino. Fresco, sutil y perfecto para el uso diario.",
+    destacado: true,
   },
   {
     id: 8,

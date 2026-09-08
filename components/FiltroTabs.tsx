@@ -3,8 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 // Barra de tabs con indicador (pill blanco) que se desliza al tab activo.
-// Extraído de CatalogoFiltrable para poder reusar el mismo estilo/animación
-// en más de un lugar. Presentacional: el estado del filtro vive en el padre.
+// Presentacional y reusable: el estado del filtro vive en el padre.
+// Se usa para los filtros de tamaño y de categoría en /catalogo.
 export default function FiltroTabs({
   tabs,
   activo,

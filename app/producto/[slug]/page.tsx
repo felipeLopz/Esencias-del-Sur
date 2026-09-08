@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import ProductImage from "@/components/ProductImage";
 import AgregarAlCarrito from "@/components/AgregarAlCarrito";
+import CompararButton from "@/components/CompararButton";
 import {
   formatearPrecio,
   getProductoPorSlug,
@@ -93,8 +94,9 @@ export default async function ProductoPage({
                 </div>
               </div>
 
-              <div className="mt-10">
+              <div className="mt-10 flex flex-wrap items-center gap-4">
                 <AgregarAlCarrito producto={producto} size="lg" />
+                <CompararButton producto={producto} conTexto />
               </div>
             </div>
           </div>

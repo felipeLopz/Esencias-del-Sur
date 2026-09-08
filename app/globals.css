@@ -12,6 +12,45 @@
   /* Tarjetas */
   --tarjeta-bg: rgba(255, 255, 255, 0.05);
   --tarjeta-borde: rgba(216, 220, 230, 0.18);
+
+  /* Colores derivados que antes estaban hardcodeados en reglas concretas.
+     Se redefinen en el bloque [data-theme="light"] mas abajo. */
+  --overlay-suave: rgba(5, 11, 26, 0.6);
+  --overlay-fuerte: rgba(5, 11, 26, 0.75);
+  --comparar-bg: rgba(5, 11, 26, 0.55);
+  --sombra-flotante: 0 10px 30px rgba(5, 11, 26, 0.55);
+  --shimmer-brillo: rgba(216, 220, 230, 0.16);
+
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   PALETA LIGHT
+   --------------------------------------------------------------------------
+   Misma logica de fondos escalonados que el modo oscuro, pero clara:
+   azul-negro = base mas clara -> azul-osc -> azul-med (cada seccion un paso
+   mas profundo, sin cortar nunca a blanco puro). --blanco pasa a ser la
+   "tinta" (texto / rellenos / bordes) y --azul-negro el fondo: como ambos se
+   invierten a la vez, toda la logica de botones/indicadores sigue funcionando.
+   ========================================================================== */
+:root[data-theme="light"] {
+  --azul-negro: #f4f6fa;
+  --azul-osc: #e9edf5;
+  --azul-med: #dde3ef;
+  --azul-suave: #cdd5e4;
+  --gris-azul: #4a5468;
+  --blanco: #0d1424;
+
+  --tarjeta-bg: rgba(13, 20, 36, 0.045);
+  --tarjeta-borde: rgba(13, 20, 36, 0.14);
+
+  --overlay-suave: rgba(18, 24, 40, 0.35);
+  --overlay-fuerte: rgba(18, 24, 40, 0.45);
+  --comparar-bg: rgba(244, 246, 250, 0.8);
+  --sombra-flotante: 0 12px 30px rgba(20, 30, 60, 0.16);
+  --shimmer-brillo: rgba(255, 255, 255, 0.6);
+
+  color-scheme: light;
 }
 
 @theme inline {
@@ -240,7 +279,7 @@ h4 {
   background-image: linear-gradient(
     110deg,
     transparent 35%,
-    rgba(216, 220, 230, 0.16) 50%,
+    var(--shimmer-brillo) 50%,
     transparent 65%
   );
   background-size: 220% 100%;
@@ -342,7 +381,7 @@ h4 {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background-color: rgba(5, 11, 26, 0.6);
+  background-color: var(--overlay-suave);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -367,6 +406,203 @@ h4 {
 }
 .drawer-panel[data-abierto="true"] {
   transform: translateX(0);
+}
+
+/* ==========================================================================
+   COMPARADOR
+   ========================================================================== */
+
+/* Botón "Comparar" de la tarjeta / detalle */
+.btn-comparar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 30px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--comparar-bg);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 13px;
+  line-height: 1;
+  backdrop-filter: blur(2px);
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, opacity 0.2s ease;
+}
+.btn-comparar:hover:not(:disabled) {
+  border-color: var(--blanco);
+}
+.btn-comparar[data-activo="true"] {
+  background-color: var(--blanco);
+  border-color: var(--blanco);
+  color: var(--azul-negro);
+}
+.btn-comparar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.btn-comparar--texto {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+  border-color: var(--blanco);
+  background-color: transparent;
+}
+
+/* Barra flotante de comparación */
+.barra-comparacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--tarjeta-borde);
+  border-radius: 16px;
+  background-color: var(--azul-med);
+  box-shadow: var(--sombra-flotante);
+  animation: barra-in 0.3s ease both;
+}
+@keyframes barra-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Cruz para quitar un thumbnail de la barra */
+.chip-quitar {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background-color: var(--blanco);
+  color: var(--azul-negro);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 10px;
+  line-height: 1;
+}
+
+/* Modal comparador */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background-color: var(--overlay-fuerte);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay[data-abierto="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-panel {
+  position: fixed;
+  z-index: 90;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: min(1100px, calc(100vw - 2rem));
+  max-height: min(85dvh, 900px);
+  border: 1px solid var(--tarjeta-borde);
+  border-radius: 16px;
+  background-color: var(--azul-negro);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.modal-panel[data-abierto="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ==========================================================================
+   BUSCADOR (Header)
+   ========================================================================== */
+
+/* Panel que baja desde la barra del Header */
+.buscador-panel {
+  background-color: var(--azul-negro);
+  border-bottom: 1px solid var(--tarjeta-borde);
+  animation: buscador-in 0.2s ease both;
+}
+@keyframes buscador-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.buscador-input {
+  width: 100%;
+  padding: 10px 18px;
+  border: 1px solid var(--tarjeta-borde);
+  border-radius: 30px;
+  background-color: transparent;
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 15px;
+  transition: border-color 0.2s ease;
+}
+.buscador-input::placeholder {
+  color: var(--gris-azul);
+}
+.buscador-input:focus {
+  outline: none;
+  border-color: var(--blanco);
+}
+
+/* 6 resultados visibles (6 x 64px); si hay mas, scrollea */
+.buscador-resultados {
+  max-height: 384px;
+  overflow-y: auto;
+}
+.buscador-resultado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 10px;
+  border-radius: 16px;
+  transition: background-color 0.2s ease;
+}
+.buscador-resultado:hover {
+  background-color: var(--tarjeta-bg);
+}
+
+/* ==========================================================================
+   TRANSICION DE TEMA
+   --------------------------------------------------------------------------
+   Clase transitoria puesta en <html> por ThemeContext solo durante ~450ms al
+   togglear. No lleva !important, asi el override de prefers-reduced-motion
+   (transition-duration: 0.001ms !important) la neutraliza. Va al final para
+   ganar por orden ante reglas de igual especificidad.
+   ========================================================================== */
+.theme-cambiando,
+.theme-cambiando *,
+.theme-cambiando *::before,
+.theme-cambiando *::after {
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    color 0.4s ease, box-shadow 0.4s ease, fill 0.4s ease;
 }
 
 /* ==========================================================================
@@ -402,7 +638,24 @@ h4 {
     display: none !important;
   }
   .drawer-overlay,
-  .drawer-panel {
+  .drawer-panel,
+  .modal-overlay,
+  .modal-panel {
+    transition: none !important;
+  }
+  .barra-comparacion {
+    animation: none !important;
+  }
+  .buscador-panel {
+    animation: none !important;
+  }
+  .modal-panel {
+    transform: translate(-50%, -50%) !important;
+  }
+  .theme-cambiando,
+  .theme-cambiando *,
+  .theme-cambiando *::before,
+  .theme-cambiando *::after {
     transition: none !important;
   }
 }

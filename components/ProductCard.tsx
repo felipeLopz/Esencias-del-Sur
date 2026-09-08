@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatearPrecio, type Producto } from "@/data/productos";
 import ProductImage from "./ProductImage";
 import AgregarAlCarrito from "./AgregarAlCarrito";
+import CompararButton from "./CompararButton";
 
 export default function ProductCard({ producto }: { producto: Producto }) {
   return (
@@ -18,6 +19,11 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </Link>
+
+      {/* Fuera del <Link> de la imagen para no anidar interactivos */}
+      <div className="absolute right-3 top-3 z-10">
+        <CompararButton producto={producto} />
+      </div>
 
       <div className="flex flex-1 flex-col p-5">
         <p className="label-ui text-[11px] uppercase text-gris-azul">
