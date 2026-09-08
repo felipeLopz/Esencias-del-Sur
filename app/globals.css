@@ -1,0 +1,305 @@
+@import "tailwindcss";
+
+:root {
+  /* Paleta "Todo en azul" */
+  --azul-negro: #050b1a;
+  --azul-osc: #10192e;
+  --azul-med: #1a2947;
+  --azul-suave: #263a5e;
+  --gris-azul: #8a94ad;
+  --blanco: #d8dce6;
+
+  /* Tarjetas */
+  --tarjeta-bg: rgba(255, 255, 255, 0.05);
+  --tarjeta-borde: rgba(216, 220, 230, 0.18);
+}
+
+@theme inline {
+  --color-azul-negro: var(--azul-negro);
+  --color-azul-osc: var(--azul-osc);
+  --color-azul-med: var(--azul-med);
+  --color-azul-suave: var(--azul-suave);
+  --color-gris-azul: var(--gris-azul);
+  --color-blanco: var(--blanco);
+
+  --font-cinzel: var(--font-cinzel);
+  --font-cormorant: var(--font-cormorant);
+  --font-eb-garamond: var(--font-eb-garamond);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--azul-negro);
+  color: var(--blanco);
+  font-family: var(--font-cormorant), Georgia, serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-cinzel), serif;
+}
+
+/* Botón pill primario: fondo blanco, texto azul-negro */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30px;
+  font-family: var(--font-eb-garamond), serif;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.btn-pill:hover {
+  opacity: 0.88;
+}
+
+.btn-primario {
+  background-color: var(--blanco);
+  color: var(--azul-negro);
+}
+
+.btn-secundario {
+  background-color: transparent;
+  color: var(--blanco);
+  border: 1px solid var(--tarjeta-borde);
+}
+.btn-secundario:hover {
+  background-color: var(--tarjeta-bg);
+  opacity: 1;
+}
+
+/* Tarjeta de producto */
+.tarjeta {
+  background-color: var(--tarjeta-bg);
+  border: 1px solid var(--tarjeta-borde);
+  border-radius: 16px;
+  color: var(--blanco);
+}
+
+.label-ui {
+  font-family: var(--font-eb-garamond), serif;
+  letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   ANIMACIONES
+   ========================================================================== */
+
+/* 1. Título del hero — máquina de escribir (cursor) */
+.tw-caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.82em;
+  margin-left: 4px;
+  background-color: var(--blanco);
+  vertical-align: baseline;
+}
+.tw-caret--done {
+  animation: tw-blink 0.6s steps(1, end) infinite;
+}
+@keyframes tw-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 2. Links de la navbar — subrayado deslizante */
+.nav-link {
+  position: relative;
+  padding-bottom: 3px;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 0;
+  background-color: var(--blanco);
+  transition: width 0.22s ease;
+}
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  width: 100%;
+}
+
+/* 3. Botones normales — relleno desde el centro */
+.btn-fill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: transparent;
+  border: 1px solid var(--blanco);
+  color: var(--blanco);
+  transition: color 0.3s ease;
+}
+.btn-fill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--blanco);
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+.btn-fill:hover,
+.btn-fill:focus-visible {
+  color: var(--azul-negro);
+}
+.btn-fill:hover::before,
+.btn-fill:focus-visible::before {
+  transform: scale(1);
+}
+.btn-pill.btn-fill:hover {
+  opacity: 1;
+}
+
+/* 4. Tarjetas de producto — borde que aparece en hover */
+.tarjeta {
+  position: relative;
+}
+.tarjeta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--blanco);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.tarjeta:hover::after {
+  opacity: 1;
+}
+
+/* 5. Tabs de filtro — indicador deslizante */
+.tab-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 30px;
+  background-color: var(--blanco);
+  transition: transform 0.25s ease, width 0.25s ease, height 0.25s ease;
+  will-change: transform;
+}
+
+/* 6. Grid de productos al filtrar — entrada escalonada */
+.card-stagger {
+  opacity: 0;
+  animation: card-in 0.4s ease forwards;
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 7. Secciones al hacer scroll — reveal una sola vez */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 8. Botón flotante — bounce de entrada */
+.float-in {
+  animation: float-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes float-in {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 9. Imágenes de producto — shimmer mientras cargan */
+.shimmer {
+  background-color: var(--azul-suave);
+  background-image: linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(216, 220, 230, 0.16) 50%,
+    transparent 65%
+  );
+  background-size: 220% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+/* 10. Botón "Consultar" — check de confirmación */
+.check-pop {
+  animation: check-pop 0.2s ease-out;
+}
+@keyframes check-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   ACCESIBILIDAD — prefers-reduced-motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .card-stagger {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  .shimmer {
+    animation: none !important;
+    background-image: none !important;
+  }
+  .float-in {
+    animation: none !important;
+  }
+  .tw-caret {
+    display: none !important;
+  }
+}
