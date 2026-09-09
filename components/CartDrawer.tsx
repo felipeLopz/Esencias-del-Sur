@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCarrito } from "@/context/CarritoContext";
 import { formatearPrecio } from "@/data/productos";
-import { formatoLabel } from "@/lib/formato";
+import { tamanoLabel } from "@/lib/agrupacion";
 import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import { linkPedidoWhatsApp } from "@/lib/whatsapp";
 
@@ -78,7 +78,7 @@ export default function CartDrawer() {
                       </Link>
                     </p>
                     <p className="label-ui mt-0.5 text-xs text-gris-azul">
-                      {formatoLabel(producto.formato)} · {producto.tamano}
+                      {tamanoLabel(producto.mililitros)}
                     </p>
                     <button
                       type="button"

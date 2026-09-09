@@ -590,6 +590,71 @@ h4 {
 }
 
 /* ==========================================================================
+   CARRUSEL DE DESTACADOS
+   ========================================================================== */
+.carrusel-flecha {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 1px solid var(--tarjeta-borde);
+  /* Fondo translucido del tema activo: oscuro-translucido en dark, claro-translucido
+     en light; el icono (--blanco) siempre contrasta contra el fondo de seccion. */
+  background-color: var(--comparar-bg);
+  backdrop-filter: blur(2px);
+  color: var(--blanco);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.carrusel-flecha:hover {
+  border-color: var(--blanco);
+}
+
+/* Etiqueta sobre la imagen (categoria del producto) */
+.destacado-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background-color: var(--blanco);
+  color: var(--azul-negro);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Dots de paginacion */
+.carrusel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: var(--gris-azul);
+  opacity: 0.5;
+  transition: width 0.25s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+.carrusel-dot[aria-current="true"] {
+  width: 22px;
+  opacity: 1;
+  background-color: var(--blanco);
+}
+
+/* ==========================================================================
+   MODAL DE PRODUCTO (intercepting route)
+   --------------------------------------------------------------------------
+   Reusa .modal-overlay / .modal-panel del comparador; solo cambia el ancho.
+   ========================================================================== */
+.modal-panel--producto {
+  width: min(780px, calc(100vw - 2rem));
+}
+
+/* ==========================================================================
    TRANSICION DE TEMA
    --------------------------------------------------------------------------
    Clase transitoria puesta en <html> por ThemeContext solo durante ~450ms al

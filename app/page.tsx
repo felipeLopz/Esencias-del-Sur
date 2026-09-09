@@ -2,7 +2,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
-import ProductCard from "@/components/ProductCard";
+import CarruselDestacados from "@/components/CarruselDestacados";
 import Reveal from "@/components/Reveal";
 import TypewriterHeadline from "@/components/TypewriterHeadline";
 import { productos } from "@/data/productos";
@@ -50,20 +50,10 @@ export default function Home() {
           </div>
         </section>
 
-        {/* DESTACADOS — azul-osc */}
+        {/* DESTACADOS — azul-osc — carrusel */}
         <section id="destacados" className="bg-azul-osc">
           <Reveal className="mx-auto max-w-6xl px-5 py-20">
-            <h2 className="font-cinzel text-3xl text-blanco">Destacados</h2>
-            <p className="mt-2 max-w-xl text-gris-azul">
-              Nuestras fragancias más queridas para empezar a descubrir la
-              colección.
-            </p>
-
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {destacados.map((producto) => (
-                <ProductCard key={producto.id} producto={producto} />
-              ))}
-            </div>
+            <CarruselDestacados productos={destacados} />
           </Reveal>
         </section>
 

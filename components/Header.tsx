@@ -29,12 +29,6 @@ export default function Header() {
           >
             Catálogo
           </Link>
-          <Link
-            href="/#destacados"
-            className="nav-link hidden text-blanco/90 hover:text-blanco sm:inline"
-          >
-            Destacados
-          </Link>
           <Buscador />
           <ThemeToggle />
           <CartButton />

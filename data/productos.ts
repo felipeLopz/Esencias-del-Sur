@@ -1,12 +1,17 @@
 // ============================================================================
-// DATOS DE PRODUCTOS — EJEMPLO
+// DATOS DE PRODUCTOS — STOCK REAL
 // ----------------------------------------------------------------------------
-// Estos productos son de ejemplo, tomados de los mockups, solo para poder
-// previsualizar el sitio. REEMPLAZAR por los productos reales de la marca
-// (nombres, precios, tamaños, descripciones e imágenes definitivas).
+// Nombres, tamaños y precios cargados del stock real del negocio.
 //
-// Las imágenes usan picsum.photos como placeholder: cambiar `imagen` por la
-// ruta real (ej: "/productos/ambar-real.jpg" dentro de /public/productos).
+// PENDIENTE de completar:
+//   - `descripcion`: opcional, todavía sin cargar para ningún producto.
+//   - `categoria`: opcional. Solo se asignó donde el nombre o la línea lo hacen
+//     evidente; el resto queda SIN categoría a propósito (no se inventaron).
+//
+// Para agregar un producto: sumá una entrada al array. El `id` y la `imagen`
+// se completan solos (ver `definir` abajo); el `slug` va a mano y tiene que ser
+// único (si dos productos comparten nombre, desambiguar con el tamaño,
+// ej. "eclaire" / "eclaire-50ml").
 // ============================================================================
 
 export type Categoria =
@@ -22,164 +27,127 @@ export const CATEGORIAS: Categoria[] = [
   "Sets regalo",
 ];
 
-export type Marca =
-  | "9PM"
-  | "Odyssey"
-  | "Khamrah"
-  | "Club de Nuit"
-  | "Badee Al Oud";
+// Marca dejó de ser un union cerrado: el stock real tiene ~20 líneas distintas
+// y crece. Se deriva de los datos (ver MARCAS al final del archivo).
+export type Marca = string;
 
-export const MARCAS: Marca[] = [
-  "9PM",
-  "Odyssey",
-  "Khamrah",
-  "Club de Nuit",
-  "Badee Al Oud",
-];
-
-export type Formato = "tubo_35ml" | "grande_50ml" | "grande_100ml";
-
-export const FORMATOS: Formato[] = ["tubo_35ml", "grande_50ml", "grande_100ml"];
+// Marca paraguas para los productos sueltos que no forman una línea con varios
+// SKUs. Se renderiza siempre al final del listado de marcas.
+export const MARCA_OTRAS = "Otras marcas";
 
 export interface Producto {
   id: number;
   slug: string;
   nombre: string;
-  categoria: Categoria;
   marca: Marca;
-  formato: Formato;
-  tamano: string;
+  /** Tamaño del frasco en mililitros. Reemplaza al viejo enum `Formato`. */
+  mililitros: number;
   precio: number;
   imagen: string;
-  descripcion: string;
-  // Se muestra en la sección "Destacados" de la Home. Opcional: si no está,
-  // el producto no aparece ahí. Conviene mantener 3 marcados: es lo que llena
-  // justo la fila del grid de la Home (lg:grid-cols-3).
+  categoria?: Categoria;
+  descripcion?: string;
+  /** Se muestra en el carrusel "Destacados" de la Home. Mantener 3 marcados. */
   destacado?: boolean;
 }
 
-export const productos: Producto[] = [
-  {
-    id: 1,
-    slug: "ambar-real",
-    nombre: "Ámbar Real",
-    categoria: "Oud & Ámbar",
-    marca: "Badee Al Oud",
-    formato: "grande_50ml",
-    tamano: "50 ml",
-    precio: 68000,
-    imagen: "https://picsum.photos/seed/ambar-real/700/900",
-    descripcion:
-      "Ámbar cálido y resinoso sobre un fondo de vainilla y benjuí. Una estela envolvente que evoca los salones de un palacio del desierto al caer la tarde.",
-    destacado: true,
-  },
-  {
-    id: 2,
-    slug: "oud-dorado",
-    nombre: "Oud Dorado",
-    categoria: "Oud & Ámbar",
-    marca: "Khamrah",
-    formato: "grande_100ml",
-    tamano: "50 ml",
-    precio: 82000,
-    imagen: "https://picsum.photos/seed/oud-dorado/700/900",
-    descripcion:
-      "Oud profundo y ahumado, redondeado con rosa de Taif y azafrán. Intenso, señorial y de larga permanencia.",
-  },
-  {
-    id: 3,
-    slug: "noche-arabe",
-    nombre: "Noche Árabe",
-    categoria: "Oud & Ámbar",
-    marca: "Badee Al Oud",
-    formato: "tubo_35ml",
-    tamano: "75 ml",
-    precio: 91000,
-    imagen: "https://picsum.photos/seed/noche-arabe/700/900",
-    descripcion:
-      "Oud, incienso y pachulí con un corazón de ciruela y especias. Un aroma nocturno, misterioso y magnético.",
-  },
-  {
-    id: 4,
-    slug: "rosa-del-desierto",
-    nombre: "Rosa del Desierto",
-    categoria: "Floral",
-    marca: "Odyssey",
-    formato: "grande_50ml",
-    tamano: "50 ml",
-    precio: 64000,
-    imagen: "https://picsum.photos/seed/rosa-del-desierto/700/900",
-    descripcion:
-      "Rosa damascena y peonía sobre un lecho de almizcle y madera de cachemira. Floral opulento con un toque aterciopelado.",
-    destacado: true,
-  },
-  {
-    id: 5,
-    slug: "jazmin-de-damasco",
-    nombre: "Jazmín de Damasco",
-    categoria: "Floral",
-    marca: "9PM",
-    formato: "grande_50ml",
-    tamano: "50 ml",
-    precio: 66000,
-    imagen: "https://picsum.photos/seed/jazmin-de-damasco/700/900",
-    descripcion:
-      "Jazmín sambac en plena floración, con nardo y un fondo cremoso de sándalo. Blanco, luminoso y adictivo.",
-  },
-  {
-    id: 6,
-    slug: "datil-y-sandalo",
-    nombre: "Dátil & Sándalo",
-    categoria: "Floral",
-    marca: "Khamrah",
-    formato: "grande_100ml",
-    tamano: "75 ml",
-    precio: 72000,
-    imagen: "https://picsum.photos/seed/datil-y-sandalo/700/900",
-    descripcion:
-      "Dátil confitado y frutos secos sobre sándalo y haba tonka. Gourmand cálido con un alma amaderada.",
-  },
-  {
-    id: 7,
-    slug: "almizcle-blanco",
-    nombre: "Almizcle Blanco",
-    categoria: "Fresco / Cítrico",
-    marca: "Club de Nuit",
-    formato: "tubo_35ml",
-    tamano: "50 ml",
-    precio: 58000,
-    imagen: "https://picsum.photos/seed/almizcle-blanco/700/900",
-    descripcion:
-      "Almizcle limpio y transparente con bergamota y notas de lino. Fresco, sutil y perfecto para el uso diario.",
-    destacado: true,
-  },
-  {
-    id: 8,
-    slug: "citrico-real",
-    nombre: "Cítrico Real",
-    categoria: "Fresco / Cítrico",
-    marca: "Club de Nuit",
-    formato: "grande_100ml",
-    tamano: "75 ml",
-    precio: 61000,
-    imagen: "https://picsum.photos/seed/citrico-real/700/900",
-    descripcion:
-      "Limón de Amalfi, mandarina y neroli sobre un fondo de cedro. Chispeante y elegante, con proyección luminosa.",
-  },
-  {
-    id: 9,
-    slug: "set-descubrimiento",
-    nombre: "Set Descubrimiento",
-    categoria: "Sets regalo",
-    marca: "9PM",
-    formato: "tubo_35ml",
-    tamano: "5 × 8 ml",
-    precio: 45000,
-    imagen: "https://picsum.photos/seed/set-descubrimiento/700/900",
-    descripcion:
-      "Cinco de nuestras fragancias más queridas en formato viajero, presentadas en un estuche de regalo. La forma ideal de encontrar tu firma.",
-  },
-];
+type ProductoInput = Omit<Producto, "id" | "imagen"> & { imagen?: string };
+
+// Autoasigna `id` correlativo e `imagen` según el slug: cada producto usa su
+// foto real en /public/productos/<slug>.png. Los 48 productos actuales tienen
+// foto; si se agrega uno sin foto todavía, pasarle `imagen` explícita.
+function definir(items: ProductoInput[]): Producto[] {
+  return items.map((p, i) => ({
+    ...p,
+    id: i + 1,
+    imagen: p.imagen ?? `/productos/${p.slug}.png`,
+  }));
+}
+
+export const productos: Producto[] = definir([
+  // ---------------------------------------------------------------- Hawas ---
+  { slug: "hawas-viper", nombre: "Hawas Viper", marca: "Hawas", mililitros: 100, precio: 39900 },
+  { slug: "hawas-pink", nombre: "Hawas Pink", marca: "Hawas", mililitros: 100, precio: 39900 },
+  { slug: "hawas-fire", nombre: "Hawas Fire", marca: "Hawas", mililitros: 100, precio: 39900, destacado: true },
+  { slug: "hawas-for-him", nombre: "Hawas For Him", marca: "Hawas", mililitros: 100, precio: 39900 },
+  { slug: "hawas-tropical", nombre: "Hawas Tropical", marca: "Hawas", mililitros: 100, precio: 45900 },
+  { slug: "hawas-ice", nombre: "Hawas Ice", marca: "Hawas", mililitros: 100, precio: 39900 },
+
+  // ----------------------------------------------------------------- Asad ---
+  { slug: "asad-bourdon", nombre: "Asad Bourdon", marca: "Asad", mililitros: 100, precio: 36900 },
+  { slug: "asad-bourdon-50ml", nombre: "Asad Bourdon", marca: "Asad", mililitros: 50, precio: 25900 },
+  { slug: "asad-edp", nombre: "Asad EDP", marca: "Asad", mililitros: 100, precio: 36900 },
+
+  // ----------------------------------------------------------------- Yara ---
+  { slug: "yara-edp", nombre: "Yara EDP", marca: "Yara", mililitros: 50, precio: 25900, destacado: true },
+  { slug: "yara-candy", nombre: "Yara Candy", marca: "Yara", mililitros: 100, precio: 36900 },
+  { slug: "yara-elixir", nombre: "Yara Elixir", marca: "Yara", mililitros: 50, precio: 25900 },
+  // Venía rotulado "Yata Tous" en el stock (typo): el frasco dice "Yara Tous".
+  { slug: "yara-tous", nombre: "Yara Tous", marca: "Yara", mililitros: 100, precio: 36900 },
+
+  // --------------------------------------------------------------- Fakhar ---
+  { slug: "fakhar-rose", nombre: "Fakhar Rose", marca: "Fakhar", mililitros: 50, precio: 25900, categoria: "Floral" },
+  { slug: "fakhar-black", nombre: "Fakhar Black", marca: "Fakhar", mililitros: 100, precio: 49900 },
+  { slug: "fakhar-gold", nombre: "Fakhar Gold", marca: "Fakhar", mililitros: 100, precio: 49900 },
+
+  // --------------------------------------------------------- Club de Nuit ---
+  { slug: "club-de-nuit-urban-man-elixir", nombre: "Club de Nuit Urban Man Elixir", marca: "Club de Nuit", mililitros: 100, precio: 51900 },
+  { slug: "club-de-nuit-untold", nombre: "Club de Nuit Untold", marca: "Club de Nuit", mililitros: 100, precio: 51900 },
+
+  // -------------------------------------------------------------- Khamrah ---
+  { slug: "khamrah-qahwa", nombre: "Khamrah Qahwa", marca: "Khamrah", mililitros: 50, precio: 25900, categoria: "Oud & Ámbar" },
+  { slug: "khamrah-waha", nombre: "Khamrah Waha", marca: "Khamrah", mililitros: 100, precio: 52900, categoria: "Oud & Ámbar", destacado: true },
+
+  // ------------------------------------------------------------------ 9PM ---
+  { slug: "9pm-edp", nombre: "9PM EDP", marca: "9PM", mililitros: 100, precio: 47900 },
+  { slug: "9pm-elixir", nombre: "9PM Elixir", marca: "9PM", mililitros: 100, precio: 50900 },
+  { slug: "9pm-rebel", nombre: "9PM Rebel", marca: "9PM", mililitros: 100, precio: 50900 },
+  // "9AM" es la misma casa/línea que 9PM (confirmado por el dueño). Nombre
+  // propio conservado; el slug queda "9am" (no colisiona con los "9pm-*").
+  { slug: "9am", nombre: "9AM", marca: "9PM", mililitros: 100, precio: 47900 },
+
+  // ------------------------------------------------------------ Erba Pura ---
+  { slug: "erba-pura", nombre: "Erba Pura", marca: "Erba Pura", mililitros: 50, precio: 32900 },
+  { slug: "erba-pura-con-panuelo", nombre: "Erba Pura Con Pañuelo", marca: "Erba Pura", mililitros: 100, precio: 52900 },
+  { slug: "erba-pura-liso", nombre: "Erba Pura Liso", marca: "Erba Pura", mililitros: 100, precio: 52900 },
+
+  // ------------------------------------------------------------- Mandarin ---
+  { slug: "mandarin-sky-vintage", nombre: "Mandarin Sky Vintage", marca: "Mandarin", mililitros: 100, precio: 45900, categoria: "Fresco / Cítrico" },
+  { slug: "mandarin-sky", nombre: "Mandarin Sky", marca: "Mandarin", mililitros: 100, precio: 45900, categoria: "Fresco / Cítrico" },
+
+  // -------------------------------------------------------------- Eclaire ---
+  { slug: "eclaire", nombre: "Eclaire", marca: "Eclaire", mililitros: 100, precio: 46900 },
+  { slug: "eclaire-50ml", nombre: "Eclaire", marca: "Eclaire", mililitros: 50, precio: 25900 },
+
+  // --------------------------------- Sueltos (sin línea con varios SKUs) ---
+  { slug: "oud-for-glory", nombre: "Oud For Glory", marca: MARCA_OTRAS, mililitros: 100, precio: 48900 },
+  { slug: "her-confesion", nombre: "Her Confesión", marca: MARCA_OTRAS, mililitros: 100, precio: 56900 },
+  { slug: "angham-second-song", nombre: "Angham Second Song", marca: MARCA_OTRAS, mililitros: 100, precio: 51900 },
+  { slug: "la-vida-es-bella", nombre: "La Vida Es Bella", marca: MARCA_OTRAS, mililitros: 75, precio: 25900 },
+  { slug: "sublime", nombre: "Sublime", marca: MARCA_OTRAS, mililitros: 100, precio: 48900 },
+  { slug: "invictus-legend", nombre: "Invictus Legend", marca: MARCA_OTRAS, mililitros: 100, precio: 30900 },
+  { slug: "haramain-amber-oud", nombre: "Haramain Amber Oud", marca: MARCA_OTRAS, mililitros: 60, precio: 54900, categoria: "Oud & Ámbar" },
+  { slug: "jpg-elixir", nombre: "JPG Elixir", marca: MARCA_OTRAS, mililitros: 100, precio: 49900 },
+  { slug: "la-bomba", nombre: "La Bomba", marca: MARCA_OTRAS, mililitros: 80, precio: 45900 },
+  { slug: "cotton-candy", nombre: "Cotton Candy", marca: MARCA_OTRAS, mililitros: 100, precio: 39900 },
+  { slug: "noble-blush", nombre: "Noble Blush", marca: MARCA_OTRAS, mililitros: 100, precio: 48900 },
+  { slug: "odyssey-marshmallow", nombre: "Odyssey Marshmallow", marca: MARCA_OTRAS, mililitros: 100, precio: 45900 },
+  { slug: "gourmand-on-top-berry-edp", nombre: "Gourmand On Top Berry EDP", marca: MARCA_OTRAS, mililitros: 100, precio: 49900 },
+  { slug: "minis-de-regalo", nombre: "Minis De Regalo", marca: MARCA_OTRAS, mililitros: 30, precio: 17900 },
+  { slug: "candy", nombre: "Candy", marca: MARCA_OTRAS, mililitros: 100, precio: 29900 },
+  { slug: "honor-and-glory", nombre: "Honor And Glory", marca: MARCA_OTRAS, mililitros: 100, precio: 48900 },
+  { slug: "212-sexy-men", nombre: "212 Sexy Men", marca: MARCA_OTRAS, mililitros: 100, precio: 21900 },
+]);
+
+// Marcas presentes en el catálogo: alfabéticas, con MARCA_OTRAS siempre última.
+// El orden es estable y no depende de los filtros activos: `fondoDeMarca` lo usa
+// para darle a cada marca siempre el mismo tono.
+export const MARCAS: Marca[] = (() => {
+  const unicas = Array.from(new Set(productos.map((p) => p.marca)));
+  const reales = unicas
+    .filter((m) => m !== MARCA_OTRAS)
+    .sort((a, b) => a.localeCompare(b, "es"));
+  return unicas.includes(MARCA_OTRAS) ? [...reales, MARCA_OTRAS] : reales;
+})();
 
 export function getProductoPorSlug(slug: string): Producto | undefined {
   return productos.find((p) => p.slug === slug);

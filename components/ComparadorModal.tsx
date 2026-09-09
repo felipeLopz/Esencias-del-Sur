@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useComparador } from "@/context/ComparadorContext";
 import { formatearPrecio } from "@/data/productos";
-import { formatoLabel } from "@/lib/formato";
+import { tamanoLabel } from "@/lib/agrupacion";
 import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import ProductImage from "./ProductImage";
 
@@ -22,20 +22,12 @@ export default function ComparadorModal() {
     },
     {
       label: "Categoría",
-      render: (i) => seleccionados[i].categoria,
+      // La mayoría del stock todavía no tiene categoría cargada.
+      render: (i) => seleccionados[i].categoria ?? "—",
     },
     {
-      label: "Formato",
-      render: (i) => {
-        const { formato, tamano } = seleccionados[i];
-        const label = formatoLabel(formato);
-        // Evita "Grande · 50 ml · 50 ml": solo suma el tamaño declarado si
-        // aporta algo que el label del formato no dice ya.
-        const normalizar = (s: string) => s.replace(/\s+/g, "").toLowerCase();
-        return normalizar(label).includes(normalizar(tamano))
-          ? label
-          : `${label} · ${tamano}`;
-      },
+      label: "Tamaño",
+      render: (i) => tamanoLabel(seleccionados[i].mililitros),
     },
     {
       label: "Precio",

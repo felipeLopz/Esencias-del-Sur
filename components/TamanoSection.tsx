@@ -1,8 +1,9 @@
 import Reveal from "@/components/Reveal";
-import MarcaSection, { FONDO_MARCA } from "@/components/MarcaSection";
+import MarcaSection from "@/components/MarcaSection";
 import type { Producto } from "@/data/productos";
 import {
   TAMANO_DETALLE,
+  fondoDeMarca,
   TAMANO_LABEL,
   filtrarPorTamano,
   marcasConProductos,
@@ -11,7 +12,7 @@ import {
 
 // Primer nivel de la jerarquía: una sección grande por tamaño ("Perfumes
 // grandes" / "Perfumes chicos"), con una banda de encabezado y debajo las
-// sub-secciones por marca (MarcaSection, con su FONDO_MARCA fijo).
+// sub-secciones por marca (MarcaSection, con su tono estable via fondoDeMarca).
 // Si el tamaño no tiene productos tras los filtros, no renderiza nada.
 export default function TamanoSection({
   tamano,
@@ -46,7 +47,7 @@ export default function TamanoSection({
           marca={marca}
           productos={delTamano}
           staggerKey={staggerKey}
-          className={FONDO_MARCA[marca]}
+          className={fondoDeMarca(marca)}
         />
       ))}
     </>

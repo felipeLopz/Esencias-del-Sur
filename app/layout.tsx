@@ -41,8 +41,10 @@ const scriptTema = `(function(){try{var k="esencias-del-sur:tema";var s=localSto
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
@@ -56,6 +58,7 @@ export default function RootLayout({
           <CarritoProvider>
             <ComparadorProvider>
               {children}
+              {modal}
               <CartDrawer />
               <BarraComparacion />
               <ComparadorModal />

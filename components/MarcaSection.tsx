@@ -6,16 +6,6 @@ import {
   type Producto,
 } from "@/data/productos";
 
-// Fondo fijo por marca (paleta existente). Cada marca conserva siempre su color
-// sin recalcular según cuáles secciones se muestren.
-export const FONDO_MARCA: Record<Marca, string> = {
-  "9PM": "bg-azul-osc",
-  Odyssey: "bg-azul-med",
-  Khamrah: "bg-azul-osc",
-  "Club de Nuit": "bg-azul-med",
-  "Badee Al Oud": "bg-azul-osc",
-};
-
 // Sub-sección de una marca dentro de una sección de tamaño (ver TamanoSection).
 // Renderiza una grilla plana: el corte por formato ya lo hizo el nivel de
 // arriba, así que acá todos los productos son del mismo tamaño.
@@ -44,7 +34,7 @@ export default function MarcaSection({
       <Reveal className="mx-auto max-w-6xl px-5 py-14">
         <h3 className="font-cinzel text-2xl text-blanco">{marca}</h3>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {deLaMarca.map((producto, i) =>
             staggerKey ? (
               <div

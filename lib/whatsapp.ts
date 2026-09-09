@@ -1,6 +1,6 @@
 import type { ItemCarrito } from "@/context/CarritoContext";
 import { formatearPrecio } from "@/data/productos";
-import { formatoLabel } from "./formato";
+import { tamanoLabel } from "./agrupacion";
 import { WHATSAPP_NUMERO, normalizarWhatsApp } from "./config";
 
 // Arma el texto plano del pedido para mandar por WhatsApp.
@@ -13,8 +13,8 @@ export function construirMensajePedido(
   for (const { producto, cantidad } of items) {
     const subtotal = producto.precio * cantidad;
     lineas.push(
-      `• ${producto.nombre} — ${producto.marca} · ${formatoLabel(
-        producto.formato
+      `• ${producto.nombre} — ${producto.marca} · ${tamanoLabel(
+        producto.mililitros
       )}`,
       `  ${cantidad} × ${formatearPrecio(producto.precio)} = ${formatearPrecio(
         subtotal

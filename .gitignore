@@ -6,3 +6,6 @@ out
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Respaldo local de las fotos de producto sin recortar (14MB, no va al repo)
+_fotos-originales/
