@@ -152,7 +152,7 @@ export default function CarruselDestacados({
                       alt={producto.nombre}
                       fill
                       sizes="(max-width: 768px) 90vw, 28rem"
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </Link>
 

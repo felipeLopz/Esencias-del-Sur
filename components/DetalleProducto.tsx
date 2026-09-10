@@ -21,13 +21,13 @@ export default function DetalleProducto({
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
-      <div className="tarjeta relative aspect-[4/5] overflow-hidden">
+      <div className="tarjeta relative aspect-square overflow-hidden">
         <ProductImage
           src={producto.imagen}
           alt={producto.nombre}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-cover"
+          className="object-contain"
           priority
         />
       </div>

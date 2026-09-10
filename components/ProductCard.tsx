@@ -17,7 +17,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           alt={producto.nombre}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-contain transition-transform duration-500 group-hover:scale-105"
         />
       </Link>
 

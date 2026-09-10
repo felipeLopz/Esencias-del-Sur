@@ -9,3 +9,4 @@ next-env.d.ts
 
 # Respaldo local de las fotos de producto sin recortar (14MB, no va al repo)
 _fotos-originales/
+_fotos-recortadas/
