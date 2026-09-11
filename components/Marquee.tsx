@@ -3,10 +3,10 @@
 // es continuo. Con prefers-reduced-motion la animación se apaga en globals.css
 // y queda la primera copia visible, estática.
 const MENSAJES = [
-  "Envíos a todo el país",
-  "Stock real",
+  "Retirás en Guaymallén y Godoy Cruz",
+  "Con encargo",
   "Pedís por WhatsApp",
-  "Perfumes originales e inspirados",
+  "Perfumes árabes, G5 y originales",
 ];
 
 function Grupo({ oculto = false }: { oculto?: boolean }) {

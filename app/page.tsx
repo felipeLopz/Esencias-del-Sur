@@ -64,6 +64,12 @@ const ACCESOS: Acceso[] = [
     href: "/catalogo",
     detalle: "Próximamente",
   },
+  {
+    nombre: "Comparar productos",
+    icono: "comparar",
+    href: "/comparar",
+    detalle: "Hasta 3 productos",
+  },
 ];
 
 export default function Home() {
@@ -252,11 +258,11 @@ export default function Home() {
           <Reveal className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 lg:grid-cols-2">
             <div>
               <h2 className="font-cinzel text-3xl text-blanco">
-                Hacemos envíos a todo el país
+                Retirás en Guaymallén o Godoy Cruz
               </h2>
               <p className="mt-4 text-lg leading-relaxed text-gris-azul">
-                Estamos en Mendoza y despachamos a toda la Argentina. Coordinás
-                el envío por WhatsApp cuando hacés el pedido.
+                Coordinás el retiro por WhatsApp cuando hacés el pedido. Sin
+                envíos, sin local a la calle.
               </p>
               <p className="label-ui mt-6 text-sm uppercase tracking-wide text-gris-azul">
                 Venta online · Sin local a la calle
@@ -265,8 +271,10 @@ export default function Home() {
 
             <div className="tarjeta relative aspect-[4/3] overflow-hidden">
               <iframe
-                title="Zona de cobertura: Mendoza, Argentina"
-                src="https://www.google.com/maps?q=Mendoza,Argentina&z=11&output=embed"
+                title="Zona de retiro: Guaymallén y Godoy Cruz, Mendoza"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(
+                  "Guaymallén y Godoy Cruz, Mendoza, Argentina"
+                )}&z=12&output=embed`}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="absolute inset-0 h-full w-full border-0"

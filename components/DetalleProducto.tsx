@@ -1,6 +1,5 @@
 import ProductImage from "./ProductImage";
 import AgregarAlCarrito from "./AgregarAlCarrito";
-import CompararButton from "./CompararButton";
 import { formatearPrecio, type Producto } from "@/data/productos";
 import { tamanoLabel } from "@/lib/agrupacion";
 
@@ -69,7 +68,6 @@ export default function DetalleProducto({
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <AgregarAlCarrito producto={producto} size="lg" />
-          <CompararButton producto={producto} conTexto />
         </div>
       </div>
     </div>

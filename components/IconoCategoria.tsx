@@ -6,7 +6,8 @@ export type IconoCategoriaNombre =
   | "oferta"
   | "regalo"
   | "original"
-  | "novedad";
+  | "novedad"
+  | "comparar";
 
 const TRAZOS: Record<IconoCategoriaNombre, React.ReactNode> = {
   "frasco-grande": (
@@ -48,6 +49,16 @@ const TRAZOS: Record<IconoCategoriaNombre, React.ReactNode> = {
     <>
       <path d="M11 3.5 12.8 8.7 18 10.5 12.8 12.3 11 17.5 9.2 12.3 4 10.5 9.2 8.7Z" />
       <path d="M18.4 16.4 19 18.2 20.8 18.8 19 19.4 18.4 21.2 17.8 19.4 16 18.8 17.8 18.2Z" />
+    </>
+  ),
+  // Misma balanza que .btn-comparar (CompararButton), a escala 24x24.
+  comparar: (
+    <>
+      <path d="M12 3v18" />
+      <path d="M5 7h14" />
+      <path d="M8 3h8" />
+      <path d="m2 12 3-5 3 5a3 3 0 0 1-6 0Z" />
+      <path d="m16 12 3-5 3 5a3 3 0 0 1-6 0Z" />
     </>
   ),
 };

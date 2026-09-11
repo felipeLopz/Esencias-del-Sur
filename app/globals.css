@@ -517,6 +517,11 @@ h4 {
   flex-direction: column;
   width: min(1100px, calc(100vw - 2rem));
   max-height: min(85dvh, 900px);
+  /* A diferencia de .drawer-panel (altura fija), acá `max-height` sólo pone un
+     techo: sin `overflow: hidden` el contenido que no entra se pinta afuera
+     del panel (encima del fondo semitransparente) en vez de quedar recortado
+     y forzar el scroll interno del div .overflow-auto de adentro. */
+  overflow: hidden;
   border: 1px solid var(--tarjeta-borde);
   border-radius: 16px;
   background-color: var(--azul-negro);

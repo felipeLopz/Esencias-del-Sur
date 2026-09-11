@@ -3,7 +3,6 @@ import { formatearPrecio, type Producto } from "@/data/productos";
 import { tamanoLabel } from "@/lib/agrupacion";
 import ProductImage from "./ProductImage";
 import AgregarAlCarrito from "./AgregarAlCarrito";
-import CompararButton from "./CompararButton";
 
 export default function ProductCard({ producto }: { producto: Producto }) {
   return (
@@ -21,15 +20,12 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         />
       </Link>
 
-      {/* Overlays fuera del <Link> de la imagen para no anidar interactivos */}
+      {/* Overlay fuera del <Link> de la imagen para no anidar interactivos */}
       {producto.original && (
         <span className="badge-original absolute left-2.5 top-2.5 z-10">
           Original
         </span>
       )}
-      <div className="absolute right-2.5 top-2.5 z-10">
-        <CompararButton producto={producto} />
-      </div>
 
       <div className="flex flex-1 flex-col p-4">
         <p className="label-ui text-[11px] uppercase text-gris-azul">
