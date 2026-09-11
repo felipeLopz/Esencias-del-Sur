@@ -275,11 +275,12 @@ export default function Home() {
           <Reveal className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-20 lg:grid-cols-2">
             <div>
               <h2 className="font-cinzel text-3xl text-blanco">
-                Retirás en Guaymallén o Godoy Cruz
+                Retirás en Guaymallén o te lo enviamos
               </h2>
               <p className="mt-4 text-lg leading-relaxed text-gris-azul">
-                Coordinás el retiro por WhatsApp cuando hacés el pedido. Sin
-                envíos, sin local a la calle.
+                Retirás tu pedido en nuestra casa en Guaymallén, o te lo
+                llevamos a domicilio en toda la zona de Guaymallén y Godoy
+                Cruz. Coordinás todo por WhatsApp.
               </p>
               <p className="label-ui mt-6 text-sm uppercase tracking-wide text-gris-azul">
                 Venta online · Sin local a la calle

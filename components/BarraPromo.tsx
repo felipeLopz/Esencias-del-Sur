@@ -5,7 +5,7 @@ export default function BarraPromo() {
   return (
     <div className="border-b border-[var(--tarjeta-borde)] bg-azul-negro">
       <p className="label-ui mx-auto max-w-6xl px-5 py-2 text-center text-[11px] uppercase tracking-wide text-gris-azul">
-        Envíos a todo el país · Pedís por WhatsApp
+        Envíos en Guaymallén y Godoy Cruz · Pedís por WhatsApp
       </p>
     </div>
   );
