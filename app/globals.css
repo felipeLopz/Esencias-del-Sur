@@ -630,6 +630,34 @@ h4 {
   text-transform: uppercase;
 }
 
+/* Pill "Original" — fragancia de autor (no una línea inspirada / dupe).
+   Discreta a propósito: translúcido del tema + borde, no relleno sólido.
+   Sirve sobre foto (mismo tratamiento que .btn-comparar) y en línea. */
+.badge-original {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--comparar-bg);
+  backdrop-filter: blur(2px);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge-original::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background-color: currentColor;
+}
+
 /* Dots de paginacion */
 .carrusel-dot {
   width: 8px;

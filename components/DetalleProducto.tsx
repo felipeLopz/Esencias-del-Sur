@@ -33,10 +33,15 @@ export default function DetalleProducto({
       </div>
 
       <div className="flex flex-col justify-center">
-        <p className="label-ui text-xs uppercase tracking-wide text-gris-azul">
-          {producto.marca}
-          {producto.categoria ? ` · ${producto.categoria}` : ""}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="label-ui text-xs uppercase tracking-wide text-gris-azul">
+            {producto.marca}
+            {producto.categoria ? ` · ${producto.categoria}` : ""}
+          </p>
+          {producto.original && (
+            <span className="badge-original">Original</span>
+          )}
+        </div>
         <Heading className="mt-2 font-cinzel text-3xl text-blanco sm:text-4xl">
           {producto.nombre}
         </Heading>

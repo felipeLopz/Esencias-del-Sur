@@ -48,6 +48,12 @@ export interface Producto {
   descripcion?: string;
   /** Se muestra en el carrusel "Destacados" de la Home. Mantener 3 marcados. */
   destacado?: boolean;
+  /**
+   * Fragancia original / de autor (no una línea inspirada o "dupe" de otra
+   * marca). Se muestra como pill "Original" en la UI. Ausente = no se afirma
+   * nada; NO implica que sea un dupe.
+   */
+  original?: boolean;
 }
 
 type ProductoInput = Omit<Producto, "id" | "imagen"> & { imagen?: string };
@@ -107,7 +113,7 @@ export const productos: Producto[] = definir([
 
   // ------------------------------------------------------------ Erba Pura ---
   { slug: "erba-pura", nombre: "Erba Pura", marca: "Erba Pura", mililitros: 50, precio: 32900 },
-  { slug: "erba-pura-con-panuelo", nombre: "Erba Pura Con Pañuelo", marca: "Erba Pura", mililitros: 100, precio: 52900 },
+  { slug: "erba-pura-con-panuelo", nombre: "Erba Pura Con Pañuelo", marca: "Erba Pura", mililitros: 100, precio: 105900, original: true },
   { slug: "erba-pura-liso", nombre: "Erba Pura Liso", marca: "Erba Pura", mililitros: 100, precio: 52900 },
 
   // ------------------------------------------------------------- Mandarin ---

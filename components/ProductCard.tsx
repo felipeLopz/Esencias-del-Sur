@@ -21,7 +21,12 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         />
       </Link>
 
-      {/* Fuera del <Link> de la imagen para no anidar interactivos */}
+      {/* Overlays fuera del <Link> de la imagen para no anidar interactivos */}
+      {producto.original && (
+        <span className="badge-original absolute left-2.5 top-2.5 z-10">
+          Original
+        </span>
+      )}
       <div className="absolute right-2.5 top-2.5 z-10">
         <CompararButton producto={producto} />
       </div>
