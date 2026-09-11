@@ -40,7 +40,7 @@ const PREGUNTAS: Pregunta[] = [
     opciones: [
       { label: "Hombre", valor: "hombre" },
       { label: "Mujer", valor: "mujer" },
-      { label: "No importa", valor: "no_importa" },
+      { label: "Unisex", valor: "no_importa" },
     ],
   },
   {
