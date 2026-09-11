@@ -1,11 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { linkConsultaWhatsApp } from "@/lib/whatsapp";
 
 // Bloque "Preguntas frecuentes" de la Home. Acordeón simple: una sola
 // pregunta abierta a la vez (abrir otra cierra la anterior) — evita que la
 // sección crezca demasiado si alguien va abriendo varias.
-const PREGUNTAS_FRECUENTES = [
+interface PreguntaFrecuente {
+  pregunta: string;
+  respuesta: string;
+  /** Agrega un link "Escribinos por WhatsApp" debajo de la respuesta. */
+  conLinkWhatsapp?: boolean;
+}
+
+const PREGUNTAS_FRECUENTES: PreguntaFrecuente[] = [
   {
     pregunta: "¿Cómo hago un pedido?",
     respuesta:
@@ -25,6 +33,8 @@ const PREGUNTAS_FRECUENTES = [
     pregunta: "¿Los perfumes son originales o G5?",
     respuesta:
       "Depende del perfume: hay algunos que son originales y otros G5 (consultanos por WhatsApp).",
+    // Única pregunta con CTA: es la que remite a "consultanos por WhatsApp".
+    conLinkWhatsapp: true,
   },
   {
     pregunta: "¿Cuáles son las formas de pago?",
@@ -85,10 +95,20 @@ export default function Faq() {
               className="faq-respuesta"
               data-abierta={abiertaAhora}
             >
-              <div className="overflow-hidden">
-                <p className="px-5 pb-5 text-lg leading-relaxed text-gris-azul">
+              <div className="overflow-hidden px-5 pb-5">
+                <p className="text-lg leading-relaxed text-gris-azul">
                   {item.respuesta}
                 </p>
+                {item.conLinkWhatsapp && (
+                  <a
+                    href={linkConsultaWhatsApp()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="label-ui mt-2 inline-block text-sm text-blanco underline underline-offset-2 transition-colors hover:text-gris-azul"
+                  >
+                    Escribinos por WhatsApp →
+                  </a>
+                )}
               </div>
             </div>
           </div>
