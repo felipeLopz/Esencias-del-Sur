@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CATEGORIAS, productos } from "@/data/productos";
 import FiltroTabs from "./FiltroTabs";
@@ -12,8 +12,7 @@ import {
   filtrarPorTamano,
   type Tamano,
 } from "@/lib/agrupacion";
-
-type FiltroCategoria = "Todos" | (typeof CATEGORIAS)[number];
+import { aplicarFiltros, esCategoria, esMarca } from "@/lib/filtros";
 
 const TODOS = "Todos";
 
@@ -24,11 +23,15 @@ const TAMANO_POR_LABEL: Record<string, Tamano> = {
 };
 
 // /catalogo: todo el inventario con la jerarquía tamaño → marca.
-// - Tamaño: fuente de verdad en la URL (?tamano=grande|chico), así el link de
-//   la Home llega ya filtrado y el estado es compartible / sobrevive el reload.
-//   Se usa router.replace (no push) para que cambiar de filtro no llene el
-//   historial: "atrás" sale del catálogo en vez de deshacer clicks de filtro.
-// - Categoría: estado local, mismo comportamiento transversal de antes.
+//
+// Todos los filtros viven en la URL, así los links de la Home llegan ya
+// filtrados y el estado es compartible / sobrevive el reload:
+//   ?tamano=grande|chico      (tabs)
+//   ?categoria=<Categoria>    (tabs)
+//   ?marca=<Marca>            (solo por link, se limpia con un chip)
+//   ?original=true            (solo por link, se limpia con un chip)
+// Se usa router.replace (no push) para que cambiar de filtro no llene el
+// historial: "atrás" sale del catálogo en vez de deshacer clicks de filtro.
 export default function CatalogoCompleto() {
   const router = useRouter();
   const pathname = usePathname();
@@ -39,26 +42,31 @@ export default function CatalogoCompleto() {
     ? paramTamano
     : TODOS;
 
-  const [categoria, setCategoria] = useState<FiltroCategoria>(TODOS);
+  const paramCategoria = searchParams.get("categoria");
+  const categoriaActiva = esCategoria(paramCategoria) ? paramCategoria : TODOS;
 
-  const cambiarTamano = (label: string) => {
+  const paramMarca = searchParams.get("marca");
+  const marcaActiva = esMarca(paramMarca) ? paramMarca : undefined;
+
+  const soloOriginales = searchParams.get("original") === "true";
+
+  // Escribe/borra un query param preservando los demás.
+  const setParam = (clave: string, valor?: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    const valor = TAMANO_POR_LABEL[label];
-    if (valor) {
-      params.set("tamano", valor);
-    } else {
-      params.delete("tamano");
-    }
+    if (valor) params.set(clave, valor);
+    else params.delete(clave);
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
 
   const filtrados = useMemo(
     () =>
-      categoria === TODOS
-        ? productos
-        : productos.filter((p) => p.categoria === categoria),
-    [categoria]
+      aplicarFiltros(productos, {
+        categoria: categoriaActiva === TODOS ? undefined : categoriaActiva,
+        marca: marcaActiva,
+        soloOriginales,
+      }),
+    [categoriaActiva, marcaActiva, soloOriginales]
   );
 
   const tamanosVisibles = tamanoActivo === TODOS ? TAMANOS : [tamanoActivo];
@@ -67,8 +75,8 @@ export default function CatalogoCompleto() {
     (t) => filtrarPorTamano(filtrados, t).length > 0
   );
 
-  // Cambia con cualquiera de los dos filtros para re-disparar el stagger.
-  const staggerKey = `${tamanoActivo}-${categoria}`;
+  // Cambia con cualquier filtro para re-disparar el stagger de las tarjetas.
+  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${marcaActiva ?? ""}-${soloOriginales}`;
 
   return (
     <>
@@ -84,7 +92,7 @@ export default function CatalogoCompleto() {
               activo={
                 tamanoActivo === TODOS ? TODOS : TAMANO_LABEL[tamanoActivo]
               }
-              onChange={cambiarTamano}
+              onChange={(label) => setParam("tamano", TAMANO_POR_LABEL[label])}
             />
           </div>
 
@@ -94,10 +102,40 @@ export default function CatalogoCompleto() {
             </p>
             <FiltroTabs
               tabs={[TODOS, ...CATEGORIAS]}
-              activo={categoria}
-              onChange={(t) => setCategoria(t as FiltroCategoria)}
+              activo={categoriaActiva}
+              onChange={(c) => setParam("categoria", c === TODOS ? undefined : c)}
             />
           </div>
+
+          {/* Filtros que sólo llegan por link desde la Home: se muestran como
+              chips para que se vean y se puedan quitar. */}
+          {(marcaActiva || soloOriginales) && (
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <p className="label-ui text-xs uppercase tracking-wide text-gris-azul">
+                Filtros
+              </p>
+              {marcaActiva && (
+                <button
+                  type="button"
+                  onClick={() => setParam("marca", undefined)}
+                  className="chip-filtro"
+                  aria-label={`Quitar filtro de marca ${marcaActiva}`}
+                >
+                  {marcaActiva} <span aria-hidden="true">✕</span>
+                </button>
+              )}
+              {soloOriginales && (
+                <button
+                  type="button"
+                  onClick={() => setParam("original", undefined)}
+                  className="chip-filtro"
+                  aria-label="Quitar filtro de originales"
+                >
+                  Solo originales <span aria-hidden="true">✕</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

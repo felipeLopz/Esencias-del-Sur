@@ -683,6 +683,138 @@ h4 {
 }
 
 /* ==========================================================================
+   QUIZ "HACER LA GUÍA" (Bloque 6 de la Home)
+   --------------------------------------------------------------------------
+   Reusa .modal-overlay / .modal-panel; solo cambia el ancho respecto del
+   comparador. Los "dots" de progreso reusan .carrusel-dot tal cual.
+   ========================================================================== */
+.modal-panel--quiz {
+  width: min(640px, calc(100vw - 2rem));
+}
+
+/* Botón de opción de una pregunta (selección única, ancho completo) */
+.quiz-opcion {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 16px;
+  text-align: left;
+  transition: border-color 0.2s ease;
+}
+.quiz-opcion:hover,
+.quiz-opcion:focus-visible {
+  border-color: var(--blanco);
+}
+
+/* Transición al cambiar de pregunta (y al mostrar los resultados). Ya
+   respetada por la regla global de prefers-reduced-motion de más abajo. */
+.quiz-paso-in {
+  animation: quiz-paso-in 0.25s ease both;
+}
+@keyframes quiz-paso-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   HOME — bloques nuevos
+   ========================================================================== */
+
+/* Bloque 3 — marquee. El track lleva el contenido duplicado y va de 0 a -50%,
+   asi el loop es continuo. Se apaga con prefers-reduced-motion (mas abajo). */
+.marquee {
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 34s linear infinite;
+  will-change: transform;
+}
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-punto {
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: var(--gris-azul);
+  flex-shrink: 0;
+}
+
+/* Bloque 4 — cuadro del icono en las tarjetas de acceso */
+.acceso-icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  transition: border-color 0.2s ease;
+}
+.tarjeta:hover .acceso-icono {
+  border-color: var(--blanco);
+}
+
+/* Bloque 5 — chip de marca */
+.marca-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 68px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  color: var(--blanco);
+  font-family: var(--font-cinzel), serif;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.2;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.marca-chip:hover {
+  border-color: var(--blanco);
+}
+
+/* Chip de filtro activo en /catalogo (marca / solo originales) */
+.chip-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 13px;
+  transition: border-color 0.2s ease;
+}
+.chip-filtro:hover {
+  border-color: var(--blanco);
+}
+
+/* ==========================================================================
    TRANSICION DE TEMA
    --------------------------------------------------------------------------
    Clase transitoria puesta en <html> por ThemeContext solo durante ~450ms al
@@ -740,6 +872,9 @@ h4 {
     animation: none !important;
   }
   .buscador-panel {
+    animation: none !important;
+  }
+  .marquee-track {
     animation: none !important;
   }
   .modal-panel {

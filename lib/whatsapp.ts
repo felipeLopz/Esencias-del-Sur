@@ -32,3 +32,13 @@ export function linkPedidoWhatsApp(items: ItemCarrito[], total: number): string 
   const texto = encodeURIComponent(construirMensajePedido(items, total));
   return `https://wa.me/${numero}?text=${texto}`;
 }
+
+// Consulta genérica (hero, banner de la Home). Sin carrito de por medio.
+export const CONSULTA_WHATSAPP = "Hola, quiero hacer una consulta";
+
+export function linkConsultaWhatsApp(
+  mensaje: string = CONSULTA_WHATSAPP
+): string {
+  const numero = normalizarWhatsApp(WHATSAPP_NUMERO);
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+}

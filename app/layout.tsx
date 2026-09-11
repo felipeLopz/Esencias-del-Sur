@@ -4,6 +4,7 @@ import "./globals.css";
 import { CarritoProvider } from "@/context/CarritoContext";
 import { ComparadorProvider } from "@/context/ComparadorContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import BarraPromo from "@/components/BarraPromo";
 import CartDrawer from "@/components/CartDrawer";
 import BarraComparacion from "@/components/BarraComparacion";
 import ComparadorModal from "@/components/ComparadorModal";
@@ -57,6 +58,7 @@ export default function RootLayout({
         <ThemeProvider>
           <CarritoProvider>
             <ComparadorProvider>
+              <BarraPromo />
               {children}
               {modal}
               <CartDrawer />
