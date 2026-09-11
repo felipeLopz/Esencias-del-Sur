@@ -801,6 +801,26 @@ h4 {
   border-color: var(--blanco);
 }
 
+/* Bloque FAQ — acordeón. Truco de grid-template-rows: anima la altura de
+   .faq-respuesta sin medirla en JS; el overflow:hidden del div interno
+   recorta el contenido mientras la fila está en 0fr. Igual que el resto de
+   las transiciones del sitio, la neutraliza el bloque global de
+   prefers-reduced-motion (selector `*`) más abajo, sin reglas extra acá. */
+.faq-respuesta {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+.faq-respuesta[data-abierta="true"] {
+  grid-template-rows: 1fr;
+}
+.faq-icono {
+  transition: transform 0.25s ease;
+}
+.faq-icono[data-abierta="true"] {
+  transform: rotate(180deg);
+}
+
 /* Chip de filtro activo en /catalogo (marca / solo originales) */
 .chip-filtro {
   display: inline-flex;

@@ -7,6 +7,7 @@ import MotivoRosaDelDesierto from "@/components/MotivoRosaDelDesierto";
 import IconoCategoria, {
   type IconoCategoriaNombre,
 } from "@/components/IconoCategoria";
+import Faq from "@/components/Faq";
 import ProductCard from "@/components/ProductCard";
 import QuizGuia from "@/components/QuizGuia";
 import Reveal from "@/components/Reveal";
@@ -250,6 +251,22 @@ export default function Home() {
             >
               Pedí por WhatsApp
             </a>
+          </Reveal>
+        </section>
+
+        {/* ==================================== BLOQUE 8.5 — PREGUNTAS === */}
+        <section id="faq" className="bg-azul-med">
+          <Reveal className="mx-auto max-w-3xl px-5 py-20">
+            <h2 className="text-center font-cinzel text-3xl text-blanco">
+              Preguntas frecuentes
+            </h2>
+            <p className="mx-auto mt-2 max-w-xl text-center text-gris-azul">
+              Lo que más nos preguntan por WhatsApp, acá a mano.
+            </p>
+
+            <div className="mt-10">
+              <Faq />
+            </div>
           </Reveal>
         </section>
 
