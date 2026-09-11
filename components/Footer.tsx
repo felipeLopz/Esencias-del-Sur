@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { linkConsultaWhatsApp } from "@/lib/whatsapp";
 
 export default function Footer() {
+  const waHref = linkConsultaWhatsApp();
+
   return (
     <footer className="bg-azul-negro border-t border-[var(--tarjeta-borde)]">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3">
@@ -35,9 +38,14 @@ export default function Footer() {
           <p className="mb-3 uppercase tracking-wide text-gris-azul">
             Contacto
           </p>
-          <p className="text-blanco/90">
-            El checkout y la consulta por WhatsApp se agregan próximamente.
-          </p>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blanco/90 underline underline-offset-2 hover:text-blanco"
+          >
+            Escribinos por WhatsApp
+          </a>
         </div>
       </div>
 

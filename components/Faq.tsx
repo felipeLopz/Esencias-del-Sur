@@ -95,20 +95,27 @@ export default function Faq() {
               className="faq-respuesta"
               data-abierta={abiertaAhora}
             >
-              <div className="overflow-hidden px-5 pb-5">
-                <p className="text-lg leading-relaxed text-gris-azul">
-                  {item.respuesta}
-                </p>
-                {item.conLinkWhatsapp && (
-                  <a
-                    href={linkConsultaWhatsApp()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="label-ui mt-2 inline-block text-sm text-blanco underline underline-offset-2 transition-colors hover:text-gris-azul"
-                  >
-                    Escribinos por WhatsApp →
-                  </a>
-                )}
+              {/* El padding va en este div interno, NO en el que tiene
+                  overflow-hidden: si el padding vive en el mismo elemento
+                  clipeado, ese padding cuenta igual para la altura mínima
+                  del truco grid-rows y la fila cerrada nunca llega a 0
+                  (quedaba en ~20px de "pb-5", mostrando texto fantasma). */}
+              <div className="overflow-hidden">
+                <div className="px-5 pb-5">
+                  <p className="text-lg leading-relaxed text-gris-azul">
+                    {item.respuesta}
+                  </p>
+                  {item.conLinkWhatsapp && (
+                    <a
+                      href={linkConsultaWhatsApp()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="label-ui mt-2 inline-block text-sm text-blanco underline underline-offset-2 transition-colors hover:text-gris-azul"
+                    >
+                      Escribinos por WhatsApp →
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </div>
