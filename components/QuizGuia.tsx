@@ -8,9 +8,12 @@ import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import ProductCard from "./ProductCard";
 
 // Bloque 6 de la Home ("¿No sabés cuál elegir?"): el botón "Hacer la guía"
-// abre este modal con las 4 preguntas del quiz, una por vez. Al responder la
-// última se llama a `recomendarProductos` (lib/quiz.ts) y se muestran los 3
-// resultados con ProductCard.
+// abre este modal con las 5 preguntas del quiz, una por vez (género, para
+// quién, aroma, ocasión, presupuesto). Al responder la última se llama a
+// `recomendarProductos` (lib/quiz.ts) y se muestran los 3 resultados con
+// ProductCard. El indicador de progreso y el botón "Atrás" son genéricos
+// (usan `PREGUNTAS.length`/`pasoActual`), así que no necesitaron cambios al
+// sumar esta pregunta.
 //
 // Mismo patrón de apertura/cierre que CartDrawer / ComparadorModal: clases
 // .modal-overlay / .modal-panel + useOverlayCerrable (Escape + scroll lock).
@@ -31,6 +34,15 @@ interface Pregunta {
 }
 
 const PREGUNTAS: Pregunta[] = [
+  {
+    id: "genero",
+    titulo: "¿Buscás para hombre, mujer, o no importa?",
+    opciones: [
+      { label: "Hombre", valor: "hombre" },
+      { label: "Mujer", valor: "mujer" },
+      { label: "No importa", valor: "no_importa" },
+    ],
+  },
   {
     id: "paraQuien",
     titulo: "¿Para quién es?",

@@ -9,6 +9,7 @@ import { productos, type Producto, type Categoria } from "@/data/productos";
 // ============================================================================
 
 export interface RespuestasQuiz {
+  genero: "hombre" | "mujer" | "no_importa";
   paraQuien: "mi" | "regalo";
   aroma: "dulce" | "fresco" | "amaderado" | "floral" | "sorprendeme";
   ocasion: "diario" | "noche";
@@ -117,6 +118,15 @@ function puntajePresupuesto(
   return 0;
 }
 
+function puntajeGenero(producto: Producto, genero: RespuestasQuiz["genero"]): number {
+  if (genero === "no_importa") return 0;
+
+  const generoElegido = genero === "hombre" ? "Hombre" : "Mujer";
+  if (producto.genero === generoElegido) return 2;
+  if (producto.genero === "Unisex") return 1;
+  return 0; // género opuesto al elegido
+}
+
 function puntajeRegalo(producto: Producto, paraQuien: RespuestasQuiz["paraQuien"]): number {
   if (paraQuien !== "regalo") return 0;
   const esSetRegalo = producto.categoria === "Sets regalo";
@@ -135,6 +145,7 @@ function puntajeOcasion(producto: Producto, ocasion: RespuestasQuiz["ocasion"]):
  * aparte de `recomendarProductos` para poder inspeccionarlo/testearlo. */
 export function calcularPuntaje(producto: Producto, respuestas: RespuestasQuiz): number {
   return (
+    puntajeGenero(producto, respuestas.genero) +
     puntajeAroma(producto, respuestas.aroma) +
     puntajePresupuesto(producto.precio, respuestas.presupuesto) +
     puntajeRegalo(producto, respuestas.paraQuien) +

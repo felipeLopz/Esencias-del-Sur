@@ -37,6 +37,7 @@ export default function DetalleProducto({
             {producto.marca}
             {producto.categoria ? ` · ${producto.categoria}` : ""}
           </p>
+          <span className="badge-genero">{producto.genero}</span>
           {producto.original && (
             <span className="badge-original">Original</span>
           )}

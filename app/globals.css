@@ -663,6 +663,29 @@ h4 {
   background-color: currentColor;
 }
 
+/* Pill de género (Hombre/Mujer/Unisex) — mismo tratamiento translúcido y
+   discreto que .badge-original (con la paleta monocromática del sitio no
+   hay un color "de marca" por género que no desentone, así que se usa el
+   mismo estilo neutro para los tres; se diferencian solo por el texto). En
+   ProductCard va en la esquina opuesta a "Original" para no competir; en
+   DetalleProducto va en la misma fila, como una pill más. */
+.badge-genero {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--comparar-bg);
+  backdrop-filter: blur(2px);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 /* Dots de paginacion */
 .carrusel-dot {
   width: 8px;

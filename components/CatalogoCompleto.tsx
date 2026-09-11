@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CATEGORIAS, productos } from "@/data/productos";
+import { CATEGORIAS, GENEROS, productos } from "@/data/productos";
 import FiltroTabs from "./FiltroTabs";
 import TamanoSection from "./TamanoSection";
 import {
@@ -12,7 +12,7 @@ import {
   filtrarPorTamano,
   type Tamano,
 } from "@/lib/agrupacion";
-import { aplicarFiltros, esCategoria, esMarca } from "@/lib/filtros";
+import { aplicarFiltros, esCategoria, esGenero, esMarca } from "@/lib/filtros";
 
 const TODOS = "Todos";
 
@@ -28,6 +28,7 @@ const TAMANO_POR_LABEL: Record<string, Tamano> = {
 // filtrados y el estado es compartible / sobrevive el reload:
 //   ?tamano=grande|chico      (tabs)
 //   ?categoria=<Categoria>    (tabs)
+//   ?genero=<Genero>          (tabs)
 //   ?marca=<Marca>            (solo por link, se limpia con un chip)
 //   ?original=true            (solo por link, se limpia con un chip)
 // Se usa router.replace (no push) para que cambiar de filtro no llene el
@@ -44,6 +45,9 @@ export default function CatalogoCompleto() {
 
   const paramCategoria = searchParams.get("categoria");
   const categoriaActiva = esCategoria(paramCategoria) ? paramCategoria : TODOS;
+
+  const paramGenero = searchParams.get("genero");
+  const generoActivo = esGenero(paramGenero) ? paramGenero : TODOS;
 
   const paramMarca = searchParams.get("marca");
   const marcaActiva = esMarca(paramMarca) ? paramMarca : undefined;
@@ -63,10 +67,11 @@ export default function CatalogoCompleto() {
     () =>
       aplicarFiltros(productos, {
         categoria: categoriaActiva === TODOS ? undefined : categoriaActiva,
+        genero: generoActivo === TODOS ? undefined : generoActivo,
         marca: marcaActiva,
         soloOriginales,
       }),
-    [categoriaActiva, marcaActiva, soloOriginales]
+    [categoriaActiva, generoActivo, marcaActiva, soloOriginales]
   );
 
   const tamanosVisibles = tamanoActivo === TODOS ? TAMANOS : [tamanoActivo];
@@ -76,7 +81,7 @@ export default function CatalogoCompleto() {
   );
 
   // Cambia con cualquier filtro para re-disparar el stagger de las tarjetas.
-  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${marcaActiva ?? ""}-${soloOriginales}`;
+  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${generoActivo}-${marcaActiva ?? ""}-${soloOriginales}`;
 
   return (
     <>
@@ -104,6 +109,17 @@ export default function CatalogoCompleto() {
               tabs={[TODOS, ...CATEGORIAS]}
               activo={categoriaActiva}
               onChange={(c) => setParam("categoria", c === TODOS ? undefined : c)}
+            />
+          </div>
+
+          <div>
+            <p className="label-ui mb-2 text-xs uppercase tracking-wide text-gris-azul">
+              Género
+            </p>
+            <FiltroTabs
+              tabs={[TODOS, ...GENEROS]}
+              activo={generoActivo}
+              onChange={(g) => setParam("genero", g === TODOS ? undefined : g)}
             />
           </div>
 

@@ -1,8 +1,10 @@
 import {
   CATEGORIAS,
+  GENEROS,
   MARCAS,
   productos,
   type Categoria,
+  type Genero,
   type Marca,
   type Producto,
 } from "@/data/productos";
@@ -24,20 +26,26 @@ export function esMarca(valor: string | null | undefined): valor is Marca {
   return !!valor && MARCAS.includes(valor);
 }
 
+export function esGenero(valor: string | null | undefined): valor is Genero {
+  return !!valor && (GENEROS as string[]).includes(valor);
+}
+
 export interface FiltrosCatalogo {
   categoria?: Categoria;
   marca?: Marca;
+  genero?: Genero;
   soloOriginales?: boolean;
 }
 
 export function aplicarFiltros(
   lista: Producto[],
-  { categoria, marca, soloOriginales }: FiltrosCatalogo
+  { categoria, marca, genero, soloOriginales }: FiltrosCatalogo
 ): Producto[] {
   return lista.filter(
     (p) =>
       (!categoria || p.categoria === categoria) &&
       (!marca || p.marca === marca) &&
+      (!genero || p.genero === genero) &&
       (!soloOriginales || p.original === true)
   );
 }

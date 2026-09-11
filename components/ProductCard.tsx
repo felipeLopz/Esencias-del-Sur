@@ -20,12 +20,17 @@ export default function ProductCard({ producto }: { producto: Producto }) {
         />
       </Link>
 
-      {/* Overlay fuera del <Link> de la imagen para no anidar interactivos */}
+      {/* Overlays fuera del <Link> de la imagen para no anidar interactivos.
+          "Original" (opcional) a la izquierda, género (siempre presente) a
+          la derecha: no compiten porque van en esquinas opuestas. */}
       {producto.original && (
         <span className="badge-original absolute left-2.5 top-2.5 z-10">
           Original
         </span>
       )}
+      <span className="badge-genero absolute right-2.5 top-2.5 z-10">
+        {producto.genero}
+      </span>
 
       <div className="flex flex-1 flex-col p-4">
         <p className="label-ui text-[11px] uppercase text-gris-azul">
