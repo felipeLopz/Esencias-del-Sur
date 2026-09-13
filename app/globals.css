@@ -246,11 +246,15 @@ h4 {
   }
 }
 
-/* 7. Secciones al hacer scroll — reveal una sola vez */
+/* 7. Secciones al hacer scroll — reveal una sola vez.
+   0.35s (antes 0.5s): junto con el rootMargin de Reveal.tsx (dispara el
+   IntersectionObserver 400px antes de que la sección entre en pantalla),
+   acorta más la ventana en la que un flick rápido en mobile podría alcanzar
+   a la transición y mostrar la sección todavía en opacity:0. */
 .reveal {
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 .reveal.is-visible {
   opacity: 1;

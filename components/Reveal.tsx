@@ -23,6 +23,18 @@ export default function Reveal({
       return;
     }
 
+    // `rootMargin` positivo agranda el viewport "virtual" hacia abajo: la
+    // sección se marca visible ANTES de entrar en pantalla de verdad, no
+    // recién cuando el 12% ya se ve. Sin este margen, en mobile (donde cada
+    // sección de marca ocupa casi toda la altura de pantalla al ser una sola
+    // columna) un flick rápido aterriza al usuario justo sobre una sección
+    // que recién ahora dispara el observer: la transición de 0.5s todavía no
+    // arrancó y se ve una banda en blanco/opacity:0 hasta que termina. En
+    // desktop el scroll suele ser más gradual y da tiempo a que la
+    // transición termine antes de que la sección quede centrada en pantalla,
+    // por eso ahí no se nota. Con el margen, el observer dispara con
+    // anticipación fija (en píxeles de scroll, no en tiempo), así que da lo
+    // mismo qué tan rápido se llegue.
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -32,7 +44,7 @@ export default function Reveal({
           }
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0, rootMargin: "0px 0px 400px 0px" }
     );
 
     io.observe(el);
