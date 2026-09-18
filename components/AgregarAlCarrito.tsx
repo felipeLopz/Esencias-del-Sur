@@ -11,10 +11,13 @@ export default function AgregarAlCarrito({
   producto,
   size = "sm",
   className = "",
+  agotado = false,
 }: {
   producto: Producto;
   size?: "sm" | "lg";
   className?: string;
+  /** Sin stock (viene de la base, ver lib/stock.ts): no se puede agregar. */
+  agotado?: boolean;
 }) {
   const { cantidadDe, agregar, actualizarCantidad } = useCarrito();
   const cantidad = cantidadDe(producto.id);
@@ -26,6 +29,22 @@ export default function AgregarAlCarrito({
 
   const pad = size === "lg" ? "px-8 py-3 text-base" : "px-5 py-2 text-sm";
   const label = size === "lg" ? "Agregar al carrito" : "Agregar";
+
+  // Agotado gana sobre todo lo demás. Si ya estaba en el carrito de alguien
+  // cuando se marcó agotado, el stepper de esa unidad se sigue viendo abajo
+  // (a propósito: no se le vacía el carrito al cliente).
+  if (agotado && cantidad === 0) {
+    return (
+      <button
+        type="button"
+        disabled
+        aria-label={`${producto.nombre} está agotado`}
+        className={`btn-pill btn-secundario label-ui cursor-not-allowed opacity-50 ${pad} ${className}`}
+      >
+        Agotado
+      </button>
+    );
+  }
 
   if (confirmado) {
     return (

@@ -9,7 +9,14 @@ import type { Producto } from "@/data/productos";
 // Cáscara del modal para la intercepting route. Cierra volviendo atrás en el
 // historial (router.back), así la URL /producto/[slug] queda "consumida" y el
 // usuario vuelve a donde estaba. Escape / overlay / botón, vía useOverlayCerrable.
-export default function ProductoModal({ producto }: { producto: Producto }) {
+export default function ProductoModal({
+  producto,
+  disponible = true,
+}: {
+  producto: Producto;
+  /** Estado de stock leído de la base (lib/stock.ts). */
+  disponible?: boolean;
+}) {
   const router = useRouter();
   const cerrar = useCallback(() => router.back(), [router]);
 
@@ -48,7 +55,11 @@ export default function ProductoModal({ producto }: { producto: Producto }) {
         </header>
 
         <div className="overflow-y-auto px-5 py-6 sm:px-8 sm:py-8">
-          <DetalleProducto producto={producto} enModal />
+          <DetalleProducto
+            producto={producto}
+            enModal
+            disponible={disponible}
+          />
         </div>
       </div>
     </>

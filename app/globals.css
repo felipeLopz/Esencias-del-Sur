@@ -667,6 +667,27 @@ h4 {
   background-color: currentColor;
 }
 
+/* Pill "Agotado" — estado de stock (viene de la base, no de productos.ts).
+   A diferencia de .badge-original / .badge-genero, que son informativos y
+   discretos, este tiene que cortar la vista: va sólido, centrado sobre la
+   foto atenuada, con la tipografía de UI del resto de las pills. */
+.badge-agotado {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--blanco);
+  background-color: var(--azul-negro);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: var(--sombra-flotante);
+}
+
 /* Pill de género (Hombre/Mujer/Unisex) — mismo tratamiento translúcido y
    discreto que .badge-original (con la paleta monocromática del sitio no
    hay un color "de marca" por género que no desentone, así que se usa el
@@ -864,6 +885,86 @@ h4 {
 }
 .chip-filtro:hover {
   border-color: var(--blanco);
+}
+
+/* ==========================================================================
+   PANEL /admin
+   --------------------------------------------------------------------------
+   Teclado del PIN y switch disponible/agotado. Mismos tokens de color y
+   radios que el resto del sitio; el panel no tiene paleta propia.
+   ========================================================================== */
+
+.tecla-pin {
+  padding: 14px 0;
+  border-radius: 14px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  color: var(--blanco);
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 20px;
+  line-height: 1;
+  transition: border-color 0.2s ease;
+}
+.tecla-pin:hover:not(:disabled),
+.tecla-pin:focus-visible:not(:disabled) {
+  border-color: var(--blanco);
+}
+.tecla-pin--ok {
+  background-color: var(--blanco);
+  border-color: var(--blanco);
+  color: var(--azul-negro);
+}
+
+/* Switch de stock: pista + perilla, con el texto del estado al lado. */
+.switch-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.switch-stock:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+.switch-stock__pista {
+  display: inline-flex;
+  align-items: center;
+  width: 46px;
+  height: 26px;
+  padding: 3px;
+  border-radius: 9999px;
+  border: 1px solid var(--tarjeta-borde);
+  background-color: var(--tarjeta-bg);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.switch-stock__perilla {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background-color: var(--gris-azul);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.switch-stock[data-activo="true"] .switch-stock__pista {
+  border-color: var(--blanco);
+}
+.switch-stock[data-activo="true"] .switch-stock__perilla {
+  transform: translateX(20px);
+  background-color: var(--blanco);
+}
+.switch-stock__texto {
+  min-width: 82px;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris-azul);
+  transition: color 0.2s ease;
+}
+.switch-stock[data-activo="true"] .switch-stock__texto {
+  color: var(--blanco);
 }
 
 /* ==========================================================================

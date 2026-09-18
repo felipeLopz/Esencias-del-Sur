@@ -12,11 +12,15 @@ import { tamanoLabel } from "@/lib/agrupacion";
 export default function DetalleProducto({
   producto,
   enModal = false,
+  disponible = true,
 }: {
   producto: Producto;
   enModal?: boolean;
+  /** Estado de stock leído de la base (lib/stock.ts). */
+  disponible?: boolean;
 }) {
   const Heading = enModal ? "h2" : "h1";
+  const agotado = !disponible;
 
   return (
     <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
@@ -26,9 +30,14 @@ export default function DetalleProducto({
           alt={producto.nombre}
           fill
           sizes="(max-width: 1024px) 100vw, 50vw"
-          className="object-contain"
+          className={`object-contain ${agotado ? "opacity-40" : ""}`}
           priority
         />
+        {agotado && (
+          <span className="badge-agotado pointer-events-none absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+            Agotado
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col justify-center">
@@ -68,7 +77,12 @@ export default function DetalleProducto({
         </div>
 
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <AgregarAlCarrito producto={producto} size="lg" />
+          <AgregarAlCarrito producto={producto} size="lg" agotado={agotado} />
+          {agotado && (
+            <p className="text-gris-azul">
+              Sin stock por ahora. Escribinos por WhatsApp y lo encargamos.
+            </p>
+          )}
         </div>
       </div>
     </div>

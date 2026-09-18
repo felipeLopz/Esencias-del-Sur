@@ -33,10 +33,20 @@ const TAMANO_POR_LABEL: Record<string, Tamano> = {
 //   ?original=true            (solo por link, se limpia con un chip)
 // Se usa router.replace (no push) para que cambiar de filtro no llene el
 // historial: "atrás" sale del catálogo en vez de deshacer clicks de filtro.
-export default function CatalogoCompleto() {
+export default function CatalogoCompleto({
+  agotados = [],
+}: {
+  /**
+   * Slugs sin stock. Llega como array (no Set/Map) porque cruza el borde
+   * server -> client: lo calcula app/catalogo/page.tsx leyendo la base.
+   */
+  agotados?: string[];
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const agotadosSet = useMemo(() => new Set(agotados), [agotados]);
 
   const paramTamano = searchParams.get("tamano");
   const tamanoActivo: Tamano | typeof TODOS = esTamano(paramTamano)
@@ -162,6 +172,7 @@ export default function CatalogoCompleto() {
             tamano={tamano}
             productos={filtrados}
             staggerKey={staggerKey}
+            agotados={agotadosSet}
           />
         ))
       ) : (

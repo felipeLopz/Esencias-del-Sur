@@ -15,6 +15,7 @@ import { productos } from "@/data/productos";
 import { MARCAS, MARCA_OTRAS } from "@/data/productos";
 import { contarPorTamano } from "@/lib/agrupacion";
 import { contarOriginales, contarPorCategoria } from "@/lib/filtros";
+import { getProductosConStock } from "@/lib/stock";
 import { linkConsultaWhatsApp } from "@/lib/whatsapp";
 
 // --------------------------------------------------------------- bloque 4 ---
@@ -73,11 +74,14 @@ const ACCESOS: Acceso[] = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
   // Bloque 7: los marcados con `destacado: true`; si no hay ninguno, los 3
   // primeros, para que la Home no quede sin productos a la vista.
-  const marcados = productos.filter((p) => p.destacado === true);
-  const destacados = marcados.length > 0 ? marcados : productos.slice(0, 3);
+  // `getProductosConStock` agrega el `disponible` de la base a cada uno: eso
+  // es lo que vuelve dinámica la Home (ver lib/stock.ts).
+  const conStock = await getProductosConStock();
+  const marcados = conStock.filter((p) => p.destacado === true);
+  const destacados = marcados.length > 0 ? marcados : conStock.slice(0, 3);
 
   // Bloque 5: las marcas reales, sin el paraguas "Otras marcas".
   const marcasReales = MARCAS.filter((m) => m !== MARCA_OTRAS);
@@ -228,7 +232,11 @@ export default function Home() {
 
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {destacados.map((producto) => (
-                <ProductCard key={producto.id} producto={producto} />
+                <ProductCard
+                  key={producto.id}
+                  producto={producto}
+                  disponible={producto.disponible}
+                />
               ))}
             </div>
           </Reveal>

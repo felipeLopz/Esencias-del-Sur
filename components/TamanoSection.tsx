@@ -18,10 +18,13 @@ export default function TamanoSection({
   tamano,
   productos,
   staggerKey,
+  agotados,
 }: {
   tamano: Tamano;
   productos: Producto[];
   staggerKey?: string;
+  /** Slugs sin stock; se pasa tal cual a cada MarcaSection. */
+  agotados?: Set<string>;
 }) {
   const delTamano = filtrarPorTamano(productos, tamano);
   if (delTamano.length === 0) return null;
@@ -47,6 +50,7 @@ export default function TamanoSection({
           marca={marca}
           productos={delTamano}
           staggerKey={staggerKey}
+          agotados={agotados}
           className={fondoDeMarca(marca)}
         />
       ))}

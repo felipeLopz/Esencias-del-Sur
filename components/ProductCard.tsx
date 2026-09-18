@@ -4,7 +4,20 @@ import { tamanoLabel } from "@/lib/agrupacion";
 import ProductImage from "./ProductImage";
 import AgregarAlCarrito from "./AgregarAlCarrito";
 
-export default function ProductCard({ producto }: { producto: Producto }) {
+export default function ProductCard({
+  producto,
+  disponible = true,
+}: {
+  producto: Producto;
+  /**
+   * Estado de stock leído de la base (lib/stock.ts). Por defecto `true`: las
+   * superficies que todavía no consultan stock (quiz, comparador) siguen
+   * mostrando la tarjeta como siempre en vez de romperse.
+   */
+  disponible?: boolean;
+}) {
+  const agotado = !disponible;
+
   return (
     <article className="tarjeta group flex flex-col overflow-hidden">
       <Link
@@ -16,9 +29,19 @@ export default function ProductCard({ producto }: { producto: Producto }) {
           alt={producto.nombre}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
-          className="object-contain transition-transform duration-500 group-hover:scale-105"
+          className={`object-contain transition-transform duration-500 group-hover:scale-105 ${
+            agotado ? "opacity-40" : ""
+          }`}
         />
       </Link>
+
+      {/* Centrado sobre la foto: no pelea con "Original" (arriba izquierda)
+          ni con el género (arriba derecha), y se lee de un vistazo. */}
+      {agotado && (
+        <span className="badge-agotado pointer-events-none absolute left-1/2 top-[28%] z-10 -translate-x-1/2">
+          Agotado
+        </span>
+      )}
 
       {/* Overlays fuera del <Link> de la imagen para no anidar interactivos.
           "Original" (opcional) a la izquierda, género (siempre presente) a
@@ -50,7 +73,7 @@ export default function ProductCard({ producto }: { producto: Producto }) {
             </p>
             <p className="label-ui text-xs text-gris-azul">{tamanoLabel(producto.mililitros)}</p>
           </div>
-          <AgregarAlCarrito producto={producto} size="sm" />
+          <AgregarAlCarrito producto={producto} size="sm" agotado={agotado} />
         </div>
       </div>
     </article>

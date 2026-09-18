@@ -5,11 +5,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import DetalleProducto from "@/components/DetalleProducto";
-import { getProductoPorSlug, productos } from "@/data/productos";
+import { getProductoPorSlug } from "@/data/productos";
+import { getProductoConStock } from "@/lib/stock";
 
-export function generateStaticParams() {
-  return productos.map((p) => ({ slug: p.slug }));
-}
+// Antes había `generateStaticParams` y las 48 fichas se prerenderizaban. Ya no:
+// el estado agotado/disponible se lee de la base en cada visita, así que la
+// ruta pasó a render dinámico (ver resumen de la tarea).
 
 export async function generateMetadata({
   params,
@@ -31,7 +32,7 @@ export default async function ProductoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const producto = getProductoPorSlug(slug);
+  const producto = await getProductoConStock(slug);
   if (!producto) notFound();
 
   return (
@@ -48,7 +49,10 @@ export default async function ProductoPage({
           </Link>
 
           <div className="mt-8">
-            <DetalleProducto producto={producto} />
+            <DetalleProducto
+              producto={producto}
+              disponible={producto.disponible}
+            />
           </div>
         </div>
       </main>

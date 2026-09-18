@@ -7,6 +7,7 @@ import CatalogoCompleto from "@/components/CatalogoCompleto";
 import TamanoSection from "@/components/TamanoSection";
 import { productos } from "@/data/productos";
 import { TAMANOS } from "@/lib/agrupacion";
+import { getDisponibilidad } from "@/lib/stock";
 
 export const metadata: Metadata = {
   title: "Catálogo — Esencias del Sur",
@@ -15,19 +16,31 @@ export const metadata: Metadata = {
 };
 
 // Fallback del Suspense: el catálogo completo sin filtros, renderizado en el
-// servidor. Es lo que queda en el HTML estático (CatalogoCompleto usa
-// useSearchParams y necesita un boundary) y lo que ve alguien sin JS.
-function ListadoSinFiltros() {
+// servidor. Es lo que ve alguien sin JS (CatalogoCompleto usa useSearchParams
+// y necesita un boundary). También respeta el stock.
+function ListadoSinFiltros({ agotados }: { agotados: Set<string> }) {
   return (
     <>
       {TAMANOS.map((tamano) => (
-        <TamanoSection key={tamano} tamano={tamano} productos={productos} />
+        <TamanoSection
+          key={tamano}
+          tamano={tamano}
+          productos={productos}
+          agotados={agotados}
+        />
       ))}
     </>
   );
 }
 
-export default function CatalogoPage() {
+export default async function CatalogoPage() {
+  // Lectura de stock en cada visita (ver lib/stock.ts): esto es lo que vuelve
+  // dinámica a la ruta.
+  const disponibilidad = await getDisponibilidad();
+  const agotados = [...disponibilidad]
+    .filter(([, disponible]) => !disponible)
+    .map(([slug]) => slug);
+
   return (
     <>
       <Header />
@@ -45,8 +58,8 @@ export default function CatalogoPage() {
           </div>
         </section>
 
-        <Suspense fallback={<ListadoSinFiltros />}>
-          <CatalogoCompleto />
+        <Suspense fallback={<ListadoSinFiltros agotados={new Set(agotados)} />}>
+          <CatalogoCompleto agotados={agotados} />
         </Suspense>
       </main>
 
