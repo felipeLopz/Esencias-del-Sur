@@ -51,12 +51,16 @@ const KEYWORDS_OCASION_NOCHE = ["noche", "intenso", "seductor", "elegante"];
 const FRASE_PIMIENTA_ROSA = /pimienta\s+rosa/g;
 
 // Rangos de precio por presupuesto. `mas50` no tiene techo.
+// El corte en $50.000 es a propósito: con la regla de pricing el techo de
+// cada franja de diez mil es X9.900, así que un corte en $60.000 dejaba la
+// última opción con un solo producto (Erba Pura Con Pañuelo). Con $50.000
+// esa opción reúne a los de $50.000 para arriba.
 const RANGOS_PRESUPUESTO: Record<
   RespuestasQuiz["presupuesto"],
   { min: number; max: number }
 > = {
   hasta30: { min: 0, max: 30000 },
-  "30a50": { min: 30000, max: 50000 },
+  "30a50": { min: 30000, max: 49999 },
   mas50: { min: 50000, max: Infinity },
 };
 
