@@ -12,7 +12,7 @@ import ProductCard from "@/components/ProductCard";
 import QuizGuia from "@/components/QuizGuia";
 import Reveal from "@/components/Reveal";
 import { productos } from "@/data/productos";
-import { MARCAS, MARCA_OTRAS } from "@/data/productos";
+import { FABRICANTES, FABRICANTE_OTRAS } from "@/data/productos";
 import { contarPorTamano } from "@/lib/agrupacion";
 import { contarOriginales, contarPorCategoria } from "@/lib/filtros";
 import { getProductosConStock } from "@/lib/stock";
@@ -83,8 +83,8 @@ export default async function Home() {
   const marcados = conStock.filter((p) => p.destacado === true);
   const destacados = marcados.length > 0 ? marcados : conStock.slice(0, 3);
 
-  // Bloque 5: las marcas reales, sin el paraguas "Otras marcas".
-  const marcasReales = MARCAS.filter((m) => m !== MARCA_OTRAS);
+  // Bloque 5: los fabricantes reales, sin el paraguas "Otras marcas".
+  const fabricantesReales = FABRICANTES.filter((f) => f !== FABRICANTE_OTRAS);
 
   const waHref = linkConsultaWhatsApp();
 
@@ -177,18 +177,18 @@ export default async function Home() {
           <Reveal className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-cinzel text-3xl text-blanco">Trabajamos con</h2>
             <p className="mt-2 max-w-xl text-gris-azul">
-              Las líneas que tenemos en stock. Tocá una para ver solo sus
+              Las casas que tenemos en stock. Tocá una para ver solo sus
               productos.
             </p>
 
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-              {marcasReales.map((marca) => (
+              {fabricantesReales.map((fabricante) => (
                 <Link
-                  key={marca}
-                  href={`/catalogo?marca=${encodeURIComponent(marca)}`}
+                  key={fabricante}
+                  href={`/catalogo?fabricante=${encodeURIComponent(fabricante)}`}
                   className="marca-chip"
                 >
-                  {marca}
+                  {fabricante}
                 </Link>
               ))}
             </div>

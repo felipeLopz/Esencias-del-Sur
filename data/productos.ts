@@ -42,11 +42,92 @@ export type Marca = string;
 // SKUs. Se renderiza siempre al final del listado de marcas.
 export const MARCA_OTRAS = "Otras marcas";
 
+// ---------------------------------------------------------------- fabricante ---
+// Nivel de agrupación por ENCIMA de la marca/línea: la casa que realmente
+// fabrica el perfume (Lattafa fabrica Khamrah, Yara, Asad, Fakhar...). No se
+// deriva de `marca` sino de un mapa slug -> fabricante cargado a mano con datos
+// confirmados, porque hay líneas paraguas ("Otras marcas") cuyos productos
+// sueltos pertenecen a fabricantes distintos entre sí.
+export type Fabricante = string;
+
+// Fabricante paraguas para los productos cuya casa no es una de las que se
+// listan como fabricante propio. Mismo texto que MARCA_OTRAS pero constante
+// separada: son dos ejes distintos y pueden divergir sin arrastrarse.
+export const FABRICANTE_OTRAS = "Otras marcas";
+
+// Orden canónico, NO alfabético: es el orden en que se muestran los bloques del
+// catálogo y de "Trabajamos con" en la Home. FABRICANTE_OTRAS va siempre último.
+export const FABRICANTES: Fabricante[] = [
+  "Lattafa",
+  "Afnan",
+  "Armaf",
+  "Rasasi",
+  "Al Haramain",
+  "Xerjoff",
+  FABRICANTE_OTRAS,
+];
+
+// Slugs con fabricante confirmado. Lo que no está acá cae en FABRICANTE_OTRAS.
+const FABRICANTE_POR_SLUG: Record<string, Fabricante> = {
+  // Lattafa
+  "khamrah-qahwa": "Lattafa",
+  "khamrah-waha": "Lattafa",
+  "yara-edp": "Lattafa",
+  "yara-candy": "Lattafa",
+  "yara-elixir": "Lattafa",
+  "yara-tous": "Lattafa",
+  "asad-bourdon": "Lattafa",
+  "asad-bourdon-50ml": "Lattafa",
+  "asad-edp": "Lattafa",
+  "fakhar-rose": "Lattafa",
+  "fakhar-black": "Lattafa",
+  "fakhar-gold": "Lattafa",
+  eclaire: "Lattafa",
+  "eclaire-50ml": "Lattafa",
+  "oud-for-glory": "Lattafa",
+  sublime: "Lattafa",
+  "noble-blush": "Lattafa",
+
+  // Afnan
+  "9pm-edp": "Afnan",
+  "9pm-elixir": "Afnan",
+  "9pm-rebel": "Afnan",
+  "9am": "Afnan",
+
+  // Armaf
+  "club-de-nuit-urban-man-elixir": "Armaf",
+  "club-de-nuit-untold": "Armaf",
+  "mandarin-sky-vintage": "Armaf",
+  "mandarin-sky": "Armaf",
+  "odyssey-marshmallow": "Armaf",
+
+  // Rasasi
+  "hawas-viper": "Rasasi",
+  "hawas-pink": "Rasasi",
+  "hawas-fire": "Rasasi",
+  "hawas-for-him": "Rasasi",
+  "hawas-tropical": "Rasasi",
+  "hawas-ice": "Rasasi",
+
+  // Al Haramain
+  "haramain-amber-oud": "Al Haramain",
+
+  // Xerjoff
+  "erba-pura": "Xerjoff",
+  "erba-pura-con-panuelo": "Xerjoff",
+  "erba-pura-liso": "Xerjoff",
+};
+
 export interface Producto {
   id: number;
   slug: string;
   nombre: string;
   marca: Marca;
+  /**
+   * Casa fabricante. Nivel de agrupación superior a `marca`: en el catálogo los
+   * productos se agrupan Fabricante -> Marca/Línea -> producto.
+   */
+  fabricante: Fabricante;
   /** Tamaño del frasco en mililitros. Reemplaza al viejo enum `Formato`. */
   mililitros: number;
   precio: number;
@@ -65,16 +146,22 @@ export interface Producto {
   original?: boolean;
 }
 
-type ProductoInput = Omit<Producto, "id" | "imagen"> & { imagen?: string };
+type ProductoInput = Omit<Producto, "id" | "imagen" | "fabricante"> & {
+  imagen?: string;
+  /** Normalmente se resuelve por slug; pasarlo a mano solo si hace falta pisar. */
+  fabricante?: Fabricante;
+};
 
-// Autoasigna `id` correlativo e `imagen` según el slug: cada producto usa su
-// foto real en /public/productos/<slug>.png. Los 48 productos actuales tienen
-// foto; si se agrega uno sin foto todavía, pasarle `imagen` explícita.
+// Autoasigna `id` correlativo, `imagen` según el slug (cada producto usa su foto
+// real en /public/productos/<slug>.png) y `fabricante` según FABRICANTE_POR_SLUG.
+// Los 48 productos actuales tienen foto; si se agrega uno sin foto todavía,
+// pasarle `imagen` explícita.
 function definir(items: ProductoInput[]): Producto[] {
   return items.map((p, i) => ({
     ...p,
     id: i + 1,
     imagen: p.imagen ?? `/productos/${p.slug}.png`,
+    fabricante: p.fabricante ?? FABRICANTE_POR_SLUG[p.slug] ?? FABRICANTE_OTRAS,
   }));
 }
 

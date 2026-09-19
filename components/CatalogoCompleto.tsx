@@ -4,15 +4,22 @@ import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { CATEGORIAS, GENEROS, productos } from "@/data/productos";
 import FiltroTabs from "./FiltroTabs";
-import TamanoSection from "./TamanoSection";
+import FabricanteSection from "./FabricanteSection";
 import {
   TAMANOS,
+  TAMANO_DETALLE,
   TAMANO_LABEL,
-  esTamano,
-  filtrarPorTamano,
+  fabricantesConProductos,
   type Tamano,
 } from "@/lib/agrupacion";
-import { aplicarFiltros, esCategoria, esGenero, esMarca } from "@/lib/filtros";
+import {
+  aplicarFiltros,
+  esCategoria,
+  esFabricante,
+  esGenero,
+  esMarca,
+  esTamano,
+} from "@/lib/filtros";
 
 const TODOS = "Todos";
 
@@ -22,13 +29,14 @@ const TAMANO_POR_LABEL: Record<string, Tamano> = {
   [TAMANO_LABEL.chico]: "chico",
 };
 
-// /catalogo: todo el inventario con la jerarquía tamaño → marca.
+// /catalogo: todo el inventario con la jerarquía fabricante → línea.
 //
 // Todos los filtros viven en la URL, así los links de la Home llegan ya
 // filtrados y el estado es compartible / sobrevive el reload:
 //   ?tamano=grande|chico      (tabs)
 //   ?categoria=<Categoria>    (tabs)
 //   ?genero=<Genero>          (tabs)
+//   ?fabricante=<Fabricante>  (solo por link, se limpia con un chip)
 //   ?marca=<Marca>            (solo por link, se limpia con un chip)
 //   ?original=true            (solo por link, se limpia con un chip)
 // Se usa router.replace (no push) para que cambiar de filtro no llene el
@@ -59,6 +67,11 @@ export default function CatalogoCompleto({
   const paramGenero = searchParams.get("genero");
   const generoActivo = esGenero(paramGenero) ? paramGenero : TODOS;
 
+  const paramFabricante = searchParams.get("fabricante");
+  const fabricanteActivo = esFabricante(paramFabricante)
+    ? paramFabricante
+    : undefined;
+
   const paramMarca = searchParams.get("marca");
   const marcaActiva = esMarca(paramMarca) ? paramMarca : undefined;
 
@@ -76,22 +89,27 @@ export default function CatalogoCompleto({
   const filtrados = useMemo(
     () =>
       aplicarFiltros(productos, {
+        fabricante: fabricanteActivo,
         categoria: categoriaActiva === TODOS ? undefined : categoriaActiva,
         genero: generoActivo === TODOS ? undefined : generoActivo,
+        tamano: tamanoActivo === TODOS ? undefined : tamanoActivo,
         marca: marcaActiva,
         soloOriginales,
       }),
-    [categoriaActiva, generoActivo, marcaActiva, soloOriginales]
+    [
+      fabricanteActivo,
+      categoriaActiva,
+      generoActivo,
+      tamanoActivo,
+      marcaActiva,
+      soloOriginales,
+    ]
   );
 
-  const tamanosVisibles = tamanoActivo === TODOS ? TAMANOS : [tamanoActivo];
-
-  const hayResultados = tamanosVisibles.some(
-    (t) => filtrarPorTamano(filtrados, t).length > 0
-  );
+  const fabricantesVisibles = fabricantesConProductos(filtrados);
 
   // Cambia con cualquier filtro para re-disparar el stagger de las tarjetas.
-  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${generoActivo}-${marcaActiva ?? ""}-${soloOriginales}`;
+  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${generoActivo}-${fabricanteActivo ?? ""}-${marcaActiva ?? ""}-${soloOriginales}`;
 
   return (
     <>
@@ -109,6 +127,11 @@ export default function CatalogoCompleto({
               }
               onChange={(label) => setParam("tamano", TAMANO_POR_LABEL[label])}
             />
+            {tamanoActivo !== TODOS && (
+              <p className="mt-2 text-sm text-gris-azul">
+                {TAMANO_DETALLE[tamanoActivo]}
+              </p>
+            )}
           </div>
 
           <div>
@@ -135,11 +158,21 @@ export default function CatalogoCompleto({
 
           {/* Filtros que sólo llegan por link desde la Home: se muestran como
               chips para que se vean y se puedan quitar. */}
-          {(marcaActiva || soloOriginales) && (
+          {(fabricanteActivo || marcaActiva || soloOriginales) && (
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <p className="label-ui text-xs uppercase tracking-wide text-gris-azul">
                 Filtros
               </p>
+              {fabricanteActivo && (
+                <button
+                  type="button"
+                  onClick={() => setParam("fabricante", undefined)}
+                  className="chip-filtro"
+                  aria-label={`Quitar filtro de fabricante ${fabricanteActivo}`}
+                >
+                  {fabricanteActivo} <span aria-hidden="true">✕</span>
+                </button>
+              )}
               {marcaActiva && (
                 <button
                   type="button"
@@ -165,11 +198,11 @@ export default function CatalogoCompleto({
         </div>
       </section>
 
-      {hayResultados ? (
-        tamanosVisibles.map((tamano) => (
-          <TamanoSection
-            key={tamano}
-            tamano={tamano}
+      {fabricantesVisibles.length > 0 ? (
+        fabricantesVisibles.map((fabricante) => (
+          <FabricanteSection
+            key={fabricante}
+            fabricante={fabricante}
             productos={filtrados}
             staggerKey={staggerKey}
             agotados={agotadosSet}

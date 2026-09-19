@@ -6,23 +6,31 @@ import {
   type Producto,
 } from "@/data/productos";
 
-// Sub-sección de una marca dentro de una sección de tamaño (ver TamanoSection).
-// Renderiza una grilla plana: el corte por formato ya lo hizo el nivel de
-// arriba, así que acá todos los productos son del mismo tamaño.
+// Sub-sección de una línea/marca dentro de un bloque de fabricante (ver
+// FabricanteSection). Renderiza una grilla plana: el corte por fabricante ya lo
+// hizo el nivel de arriba. El fondo lo pone el bloque de fabricante, así que
+// acá no se pasa color (todas las líneas de un fabricante comparten tono).
 //
 // Props:
 // - `productos`: lista sobre la que operar (default: todos). Normalmente llega
-//   ya filtrada por tamaño y por categoría.
+//   ya filtrada por fabricante y por los filtros del catálogo.
 // - `staggerKey`: si se pasa, las tarjetas entran con el stagger y se re-animan
 //   cuando cambia el valor (cambio de filtro).
 export default function MarcaSection({
   marca,
+  titulo,
   className = "",
   productos = todosLosProductos,
   staggerKey,
   agotados,
 }: {
   marca: Marca;
+  /**
+   * Encabezado visible, si tiene que diferir del nombre de la marca. Lo usa
+   * FabricanteSection para la marca paraguas MARCA_OTRAS, que como sub-línea de
+   * un fabricante concreto no se puede rotular "Otras marcas".
+   */
+  titulo?: string;
   className?: string;
   productos?: Producto[];
   staggerKey?: string;
@@ -35,7 +43,7 @@ export default function MarcaSection({
   return (
     <section className={className}>
       <Reveal className="mx-auto max-w-6xl px-5 py-14">
-        <h3 className="font-cinzel text-2xl text-blanco">{marca}</h3>
+        <h3 className="font-cinzel text-2xl text-blanco">{titulo ?? marca}</h3>
 
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {deLaMarca.map((producto, i) => {

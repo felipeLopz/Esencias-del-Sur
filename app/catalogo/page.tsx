@@ -4,15 +4,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import CatalogoCompleto from "@/components/CatalogoCompleto";
-import TamanoSection from "@/components/TamanoSection";
-import { productos } from "@/data/productos";
-import { TAMANOS } from "@/lib/agrupacion";
+import FabricanteSection from "@/components/FabricanteSection";
+import { FABRICANTES, productos } from "@/data/productos";
 import { getDisponibilidad } from "@/lib/stock";
 
 export const metadata: Metadata = {
   title: "Catálogo — Esencias del Sur",
   description:
-    "Todo el inventario de fragancias árabes, organizado por tamaño y por marca, filtrable por categoría.",
+    "Todo el inventario de fragancias árabes, organizado por fabricante y por línea, filtrable por tamaño, categoría y género.",
 };
 
 // Fallback del Suspense: el catálogo completo sin filtros, renderizado en el
@@ -21,10 +20,10 @@ export const metadata: Metadata = {
 function ListadoSinFiltros({ agotados }: { agotados: Set<string> }) {
   return (
     <>
-      {TAMANOS.map((tamano) => (
-        <TamanoSection
-          key={tamano}
-          tamano={tamano}
+      {FABRICANTES.map((fabricante) => (
+        <FabricanteSection
+          key={fabricante}
+          fabricante={fabricante}
           productos={productos}
           agotados={agotados}
         />
@@ -52,8 +51,8 @@ export default async function CatalogoPage() {
               Catálogo completo
             </h1>
             <p className="mt-2 max-w-xl text-gris-azul">
-              Todo el inventario, organizado por tamaño y, dentro de cada
-              tamaño, por marca.
+              Todo el inventario, organizado por fabricante y, dentro de cada
+              fabricante, por línea.
             </p>
           </div>
         </section>
