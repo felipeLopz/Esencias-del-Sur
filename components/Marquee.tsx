@@ -3,7 +3,7 @@
 // es continuo. Con prefers-reduced-motion la animación se apaga en globals.css
 // y queda la primera copia visible, estática.
 const MENSAJES = [
-  "Retirás en Guaymallén y Godoy Cruz",
+  "Envíos en Guaymallén, Godoy Cruz y el Centro",
   "Con encargo",
   "Pedís por WhatsApp",
   "Perfumes árabes, G5 y originales",

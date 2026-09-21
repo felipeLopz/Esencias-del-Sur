@@ -43,7 +43,8 @@ const PREGUNTAS_FRECUENTES: PreguntaFrecuente[] = [
   },
   {
     pregunta: "¿Cuánto tarda en estar listo mi pedido?",
-    respuesta: "Puede variar según el perfume, pero entre 1 y 2 días como máximo.",
+    respuesta:
+      "Si el perfume lo tenemos en mano, entre 1 y 2 días. Si hay que encargarlo, te confirmamos el plazo por WhatsApp apenas hacés el pedido.",
   },
 ];
 

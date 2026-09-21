@@ -74,6 +74,14 @@ const ACCESOS: Acceso[] = [
   },
 ];
 
+// Mapa de cobertura: embed de OpenStreetMap encuadrado por bbox (oeste, sur,
+// este, norte). Un `q=` de Google geocodea a UN solo lugar y con `z` fijo no
+// garantiza encuadre; el bbox sí: el marco muestra siempre esta extensión, en
+// escritorio y en celular. Cubre Godoy Cruz (SO), el Centro de Ciudad (NO) y
+// la zona urbana de Guaymallén (E). Para ajustar el encuadre, tocar el bbox.
+const MAPA_BBOX = "-68.905,-32.965,-68.775,-32.855";
+const MAPA_COBERTURA_SRC = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(MAPA_BBOX)}&layer=mapnik`;
+
 export default async function Home() {
   // Bloque 7: los marcados con `destacado: true`; si no hay ninguno, los 3
   // primeros, para que la Home no quede sin productos a la vista.
@@ -112,7 +120,7 @@ export default async function Home() {
                 en un solo lugar
               </h1>
               <p className="mx-auto mt-6 max-w-xl text-lg text-gris-azul sm:text-xl lg:mx-0">
-                Originales e inspirados, con stock real y envíos a todo el país.
+                Originales e inspirados, con envíos en Guaymallén, Godoy Cruz y el Centro.
               </p>
 
               <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
@@ -177,7 +185,7 @@ export default async function Home() {
           <Reveal className="mx-auto max-w-6xl px-5 py-20">
             <h2 className="font-cinzel text-3xl text-blanco">Trabajamos con</h2>
             <p className="mt-2 max-w-xl text-gris-azul">
-              Las casas que tenemos en stock. Tocá una para ver solo sus
+              Las casas con las que trabajamos. Tocá una para ver solo sus
               productos.
             </p>
 
@@ -287,8 +295,8 @@ export default async function Home() {
               </h2>
               <p className="mt-4 text-lg leading-relaxed text-gris-azul">
                 Retirás tu pedido en nuestra casa en Guaymallén, o te lo
-                llevamos a domicilio en toda la zona de Guaymallén y Godoy
-                Cruz. Coordinás todo por WhatsApp.
+                llevamos a domicilio en Guaymallén, Godoy Cruz y el Centro.
+                Coordinás todo por WhatsApp.
               </p>
               <p className="label-ui mt-6 text-sm uppercase tracking-wide text-gris-azul">
                 Venta online · Sin local a la calle
@@ -297,10 +305,8 @@ export default async function Home() {
 
             <div className="tarjeta relative aspect-[4/3] overflow-hidden">
               <iframe
-                title="Zona de retiro: Guaymallén y Godoy Cruz, Mendoza"
-                src={`https://www.google.com/maps?q=${encodeURIComponent(
-                  "Guaymallén y Godoy Cruz, Mendoza, Argentina"
-                )}&z=12&output=embed`}
+                title="Zonas de envío: Guaymallén, Godoy Cruz y el Centro, Mendoza"
+                src={MAPA_COBERTURA_SRC}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="absolute inset-0 h-full w-full border-0"
