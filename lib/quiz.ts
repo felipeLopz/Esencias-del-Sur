@@ -3,9 +3,12 @@ import { productos, type Producto, type Categoria } from "@/data/productos";
 // ============================================================================
 // LÓGICA DE PUNTAJE DEL QUIZ DE RECOMENDACIÓN
 // ----------------------------------------------------------------------------
-// Sin UI todavía: esto solo calcula, en base a las respuestas del quiz, los 3
-// productos con mayor puntaje. Ver `recomendarProductos` para el criterio de
-// puntaje completo (match de aroma, presupuesto, "para regalar" y ocasión).
+// Dos etapas, en este orden:
+//   1. FILTROS DUROS (descartan): presupuesto y género. Lo que no los cumple
+//      no puede aparecer nunca, aunque puntúe altísimo en todo lo demás.
+//   2. PUNTAJE (ordena): aroma, género exacto vs unisex, "para regalar" y
+//      ocasión, sobre los que ya pasaron el filtro.
+// Devuelve hasta 3 productos; si califican menos, devuelve menos.
 // ============================================================================
 
 export interface RespuestasQuiz {
@@ -50,21 +53,18 @@ const KEYWORDS_OCASION_NOCHE = ["noche", "intenso", "seductor", "elegante"];
 // de substring-en-frase-de-otro-significado.
 const FRASE_PIMIENTA_ROSA = /pimienta\s+rosa/g;
 
-// Rangos de precio por presupuesto. `mas50` no tiene techo.
-// El corte en $50.000 es a propósito: con la regla de pricing el techo de
-// cada franja de diez mil es X9.900, así que un corte en $60.000 dejaba la
-// última opción con un solo producto (Erba Pura Con Pañuelo). Con $50.000
-// esa opción reúne a los de $50.000 para arriba.
-const RANGOS_PRESUPUESTO: Record<
-  RespuestasQuiz["presupuesto"],
-  { min: number; max: number }
-> = {
-  hasta30: { min: 0, max: 30000 },
-  "30a50": { min: 30000, max: 49999 },
-  mas50: { min: 50000, max: Infinity },
+// TECHO de gasto por opción de presupuesto. Es un techo, NO una banda: la
+// opción elegida dice cuánto está dispuesto a gastar el usuario, así que un
+// producto más barato siempre califica. Antes esto era un rango {min, max} y
+// el piso descartaba, por ejemplo, un frasco de $19.900 cuando se elegía
+// "$30.000 - $50.000", que es justo al revés de lo que espera el usuario.
+//
+// `mas50` no tiene techo: cualquier precio califica.
+const TECHO_PRESUPUESTO: Record<RespuestasQuiz["presupuesto"], number> = {
+  hasta30: 30000,
+  "30a50": 49999,
+  mas50: Infinity,
 };
-
-const TOLERANCIA_PRESUPUESTO = 3000;
 
 const MILILITROS_REGALO_MIN = 60;
 
@@ -102,33 +102,41 @@ function puntajeAroma(producto: Producto, aroma: RespuestasQuiz["aroma"]): numbe
   return contieneAlguna(producto.descripcion, KEYWORDS_POR_AROMA[aroma]) ? 1.5 : 0;
 }
 
-function puntajePresupuesto(
+/**
+ * El presupuesto ya NO puntúa: es un filtro duro que se aplica antes de
+ * puntuar (ver `entraEnPresupuesto` / `recomendarProductos`). Como peso del
+ * puntaje valía 2 sobre 8.5, y un match exacto de categoría (3) alcanzaba
+ * para tapar esa penalización: por eso se colaban productos de $114.900 en el
+ * rango "hasta $30.000".
+ */
+function entraEnPresupuesto(
   precio: number,
   presupuesto: RespuestasQuiz["presupuesto"]
-): number {
-  const { min, max } = RANGOS_PRESUPUESTO[presupuesto];
-
-  if (precio >= min && precio <= max) return 2;
-
-  // Rango adyacente por abajo (con tolerancia).
-  if (precio < min && precio >= min - TOLERANCIA_PRESUPUESTO) return 0.5;
-
-  // Rango adyacente por arriba (con tolerancia). No aplica si el rango no
-  // tiene techo (mas50).
-  if (max !== Infinity && precio > max && precio <= max + TOLERANCIA_PRESUPUESTO) {
-    return 0.5;
-  }
-
-  return 0;
+): boolean {
+  return precio <= TECHO_PRESUPUESTO[presupuesto];
 }
 
+/**
+ * Filtro duro de género: con "hombre" o "mujer" solo califican los productos
+ * de ese género y los Unisex. Con "no_importa" no se filtra nada. Antes esto
+ * era solo puntaje (0 para el género opuesto) y no descartaba: pedir "Hombre"
+ * con aroma floral devolvía Fakhar Rose y Eclaire, ambos de Mujer.
+ */
+function calzaElGenero(producto: Producto, genero: RespuestasQuiz["genero"]): boolean {
+  if (genero === "no_importa") return true;
+  if (producto.genero === "Unisex") return true;
+  return producto.genero === (genero === "hombre" ? "Hombre" : "Mujer");
+}
+
+// El puntaje de género sigue existiendo para ordenar lo que YA pasó el filtro:
+// un match exacto pesa más que un Unisex.
 function puntajeGenero(producto: Producto, genero: RespuestasQuiz["genero"]): number {
   if (genero === "no_importa") return 0;
 
   const generoElegido = genero === "hombre" ? "Hombre" : "Mujer";
   if (producto.genero === generoElegido) return 2;
   if (producto.genero === "Unisex") return 1;
-  return 0; // género opuesto al elegido
+  return 0; // género opuesto: hoy lo descarta `calzaElGenero` antes de puntuar
 }
 
 function puntajeRegalo(producto: Producto, paraQuien: RespuestasQuiz["paraQuien"]): number {
@@ -151,21 +159,39 @@ export function calcularPuntaje(producto: Producto, respuestas: RespuestasQuiz):
   return (
     puntajeGenero(producto, respuestas.genero) +
     puntajeAroma(producto, respuestas.aroma) +
-    puntajePresupuesto(producto.precio, respuestas.presupuesto) +
     puntajeRegalo(producto, respuestas.paraQuien) +
     puntajeOcasion(producto, respuestas.ocasion)
   );
 }
 
-/** Devuelve los 3 productos con mayor puntaje para las respuestas dadas.
- * Empates (incluido el del 3er puesto) se desempatan por mayor precio. */
+/**
+ * Productos que CALIFICAN para las respuestas dadas: presupuesto y género son
+ * filtros duros, no pesos del puntaje. Puede devolver una lista vacía.
+ */
+export function productosQueCalifican(respuestas: RespuestasQuiz): Producto[] {
+  return productos.filter(
+    (p) =>
+      entraEnPresupuesto(p.precio, respuestas.presupuesto) &&
+      calzaElGenero(p, respuestas.genero)
+  );
+}
+
+/**
+ * Hasta 3 productos recomendados, siempre dentro del presupuesto y del género
+ * elegidos. Si califican menos de 3, devuelve los que haya (incluso ninguno):
+ * NO se rellena con productos que no cumplan los filtros.
+ * Los empates de puntaje se desempatan por precio: gana el más BARATO en los
+ * rangos con techo, y el más CARO en el rango sin techo ("más de $50.000"),
+ * donde quien elige suele buscar algo premium.
+ */
 export function recomendarProductos(respuestas: RespuestasQuiz): Producto[] {
-  return [...productos]
+  const sinTecho = TECHO_PRESUPUESTO[respuestas.presupuesto] === Infinity;
+  return productosQueCalifican(respuestas)
     .sort((a, b) => {
       const puntajeA = calcularPuntaje(a, respuestas);
       const puntajeB = calcularPuntaje(b, respuestas);
       if (puntajeB !== puntajeA) return puntajeB - puntajeA;
-      return b.precio - a.precio;
+      return sinTecho ? b.precio - a.precio : a.precio - b.precio;
     })
     .slice(0, 3);
 }

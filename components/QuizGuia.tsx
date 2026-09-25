@@ -10,8 +10,11 @@ import ProductCard from "./ProductCard";
 // Bloque 6 de la Home ("¿No sabés cuál elegir?"): el botón "Hacer la guía"
 // abre este modal con las 5 preguntas del quiz, una por vez (género, para
 // quién, aroma, ocasión, presupuesto). Al responder la última se llama a
-// `recomendarProductos` (lib/quiz.ts) y se muestran los 3 resultados con
-// ProductCard. El indicador de progreso y el botón "Atrás" son genéricos
+// `recomendarProductos` (lib/quiz.ts) y se muestran con ProductCard los
+// resultados que califiquen: hasta 3, pero pueden ser menos (o ninguno, y ahí
+// va un estado vacío), porque presupuesto y género son filtros duros y nunca
+// se rellena con productos que no los cumplan.
+// El indicador de progreso y el botón "Atrás" son genéricos
 // (usan `PREGUNTAS.length`/`pasoActual`), así que no necesitaron cambios al
 // sumar esta pregunta.
 //
@@ -168,18 +171,23 @@ export default function QuizGuia() {
                 {resultados ? (
                   <div key="resultados" className="quiz-paso-in">
                     <h3 className="text-center font-cinzel text-2xl text-blanco">
-                      Tu selección
+                      {resultados.length > 0
+                        ? "Tu selección"
+                        : "No encontramos coincidencias"}
                     </h3>
                     <p className="mx-auto mt-2 max-w-sm text-center text-gris-azul">
-                      Según tus respuestas, estos son los perfumes que más se
-                      ajustan.
+                      {resultados.length > 0
+                        ? "Según tus respuestas, estos son los perfumes que más se ajustan."
+                        : "No encontramos perfumes en ese presupuesto y género. Probá ampliando el presupuesto o eligiendo Unisex."}
                     </p>
 
-                    <div className="mt-8 grid gap-5 sm:grid-cols-3">
-                      {resultados.map((producto) => (
-                        <ProductCard key={producto.id} producto={producto} />
-                      ))}
-                    </div>
+                    {resultados.length > 0 && (
+                      <div className="mt-8 grid gap-5 sm:grid-cols-3">
+                        {resultados.map((producto) => (
+                          <ProductCard key={producto.id} producto={producto} />
+                        ))}
+                      </div>
+                    )}
 
                     <div className="mt-8 flex justify-center">
                       <button
