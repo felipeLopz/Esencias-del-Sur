@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { formatearPrecio, type Producto } from "@/data/productos";
 import { tamanoLabel } from "@/lib/agrupacion";
 import ProductImage from "./ProductImage";
 import AgregarAlCarrito from "./AgregarAlCarrito";
+import LinkConModo from "./LinkConModo";
 
 export default function ProductCard({
   producto,
@@ -20,7 +20,7 @@ export default function ProductCard({
 
   return (
     <article className="tarjeta group flex flex-col overflow-hidden">
-      <Link
+      <LinkConModo
         href={`/producto/${producto.slug}`}
         className="relative block aspect-square overflow-hidden"
       >
@@ -33,7 +33,7 @@ export default function ProductCard({
             agotado ? "opacity-40" : ""
           }`}
         />
-      </Link>
+      </LinkConModo>
 
       {/* Centrado sobre la foto: no pelea con "Original" (arriba izquierda)
           ni con el género (arriba derecha), y se lee de un vistazo. */}
@@ -46,7 +46,7 @@ export default function ProductCard({
       {/* Overlays fuera del <Link> de la imagen para no anidar interactivos.
           "Original" (opcional) a la izquierda, género (siempre presente) a
           la derecha: no compiten porque van en esquinas opuestas. */}
-      {producto.original && (
+      {producto.esCasaOriginal && (
         <span className="badge-original absolute left-2.5 top-2.5 z-10">
           Original
         </span>
@@ -60,7 +60,9 @@ export default function ProductCard({
           {producto.categoria ?? producto.marca}
         </p>
         <h3 className="mt-1 font-cinzel text-lg text-blanco">
-          <Link href={`/producto/${producto.slug}`}>{producto.nombre}</Link>
+          <LinkConModo href={`/producto/${producto.slug}`}>
+            {producto.nombre}
+          </LinkConModo>
         </h3>
         <p className="mt-2 line-clamp-2 flex-1 text-gris-azul">
           {producto.descripcion}

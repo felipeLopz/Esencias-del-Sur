@@ -2,8 +2,14 @@
 
 import Link from "next/link";
 import { useCarrito } from "@/context/CarritoContext";
-import { formatearPrecio } from "@/data/productos";
-import { tamanoLabel } from "@/lib/agrupacion";
+import { useModoCatalogo } from "@/context/ModoCatalogoContext";
+import { formatearPrecio, type Producto } from "@/data/productos";
+import {
+  MODO_CORTO,
+  conservarModo,
+  debeMostrarModo,
+  presentacionLabel,
+} from "@/lib/catalogo";
 import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import { linkPedidoWhatsApp } from "@/lib/whatsapp";
 
@@ -21,6 +27,24 @@ export default function CartDrawer() {
 
   // Escape para cerrar + bloqueo de scroll del body mientras está abierto.
   useOverlayCerrable(drawerAbierto, cerrarDrawer);
+
+  const { modoEnUrl, modosVisibles, conModo } = useModoCatalogo();
+
+  // Cada ítem dice su modo (G5 / Original) si los modos están visibles o si
+  // hay algo que no es G5. Todo G5 con los modos ocultos: igual que siempre.
+  const mostrarModo = debeMostrarModo(
+    items.map((i) => i.producto),
+    modosVisibles
+  );
+
+  // La ficha de un ítem se abre en el modo DEL ÍTEM (el precio que se ve en la
+  // ficha es el del carrito). Sin modo en la URL y un ítem G5, el link queda
+  // sin `?modo=`, como siempre.
+  const hrefFicha = (producto: Producto) =>
+    conservarModo(
+      `/producto/${producto.slug}`,
+      modoEnUrl || producto.modo !== "g5" ? producto.modo : null
+    );
 
   return (
     <>
@@ -53,7 +77,7 @@ export default function CartDrawer() {
           <div className="flex flex-1 flex-col items-center justify-center gap-5 px-6 text-center">
             <p className="text-gris-azul">Tu carrito está vacío.</p>
             <Link
-              href="/catalogo"
+              href={conModo("/catalogo")}
               onClick={cerrarDrawer}
               className="btn-pill btn-fill label-ui px-6 py-2 text-sm"
             >
@@ -70,15 +94,13 @@ export default function CartDrawer() {
                       {producto.marca}
                     </p>
                     <p className="font-cinzel text-base text-blanco">
-                      <Link
-                        href={`/producto/${producto.slug}`}
-                        onClick={cerrarDrawer}
-                      >
+                      <Link href={hrefFicha(producto)} onClick={cerrarDrawer}>
                         {producto.nombre}
                       </Link>
                     </p>
                     <p className="label-ui mt-0.5 text-xs text-gris-azul">
-                      {tamanoLabel(producto.mililitros)}
+                      {presentacionLabel(producto)}
+                      {mostrarModo && ` · ${MODO_CORTO[producto.modo]}`}
                     </p>
                     <button
                       type="button"
@@ -129,7 +151,7 @@ export default function CartDrawer() {
                 </span>
               </div>
               <a
-                href={linkPedidoWhatsApp(items, total)}
+                href={linkPedidoWhatsApp(items, total, { modosVisibles })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-pill btn-primario label-ui w-full px-6 py-3 text-base"

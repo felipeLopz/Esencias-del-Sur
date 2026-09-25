@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { linkConsultaWhatsApp } from "@/lib/whatsapp";
+import LinkConModo from "./LinkConModo";
 
 export default function Footer() {
   const waHref = linkConsultaWhatsApp();
@@ -19,17 +19,17 @@ export default function Footer() {
           <p className="mb-3 uppercase tracking-wide text-gris-azul">Navegar</p>
           <ul className="space-y-2">
             <li>
-              <Link href="/" className="text-blanco/90 hover:text-blanco">
+              <LinkConModo href="/" className="text-blanco/90 hover:text-blanco">
                 Inicio
-              </Link>
+              </LinkConModo>
             </li>
             <li>
-              <Link
+              <LinkConModo
                 href="/catalogo"
                 className="text-blanco/90 hover:text-blanco"
               >
                 Catálogo completo
-              </Link>
+              </LinkConModo>
             </li>
           </ul>
         </div>

@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CATEGORIAS, GENEROS, productos } from "@/data/productos";
+import { CATEGORIAS, GENEROS } from "@/data/productos";
+import { productosParaModo, type Modo } from "@/lib/catalogo";
 import FiltroTabs from "./FiltroTabs";
 import FabricanteSection from "./FabricanteSection";
 import {
@@ -13,6 +14,8 @@ import {
   type Tamano,
 } from "@/lib/agrupacion";
 import {
+  PARAM_CASA_ORIGINAL,
+  VALOR_CASA_ORIGINAL,
   aplicarFiltros,
   esCategoria,
   esFabricante,
@@ -38,15 +41,26 @@ const TAMANO_POR_LABEL: Record<string, Tamano> = {
 //   ?genero=<Genero>          (tabs)
 //   ?fabricante=<Fabricante>  (solo por link, se limpia con un chip)
 //   ?marca=<Marca>            (solo por link, se limpia con un chip)
-//   ?original=true            (solo por link, se limpia con un chip)
+//   ?casaoriginal=1           (solo por link, se limpia con un chip; es
+//                             "casa original", NO el modo del catálogo)
+//   ?modo=g5|original         (modo del catálogo; lo resuelve la página y
+//                             llega como prop. setParam lo conserva al
+//                             cambiar de filtro)
 // Se usa router.replace (no push) para que cambiar de filtro no llene el
 // historial: "atrás" sale del catálogo en vez de deshacer clicks de filtro.
 export default function CatalogoCompleto({
+  modo,
   agotados = [],
 }: {
   /**
-   * Slugs sin stock. Llega como array (no Set/Map) porque cruza el borde
-   * server -> client: lo calcula app/catalogo/page.tsx leyendo la base.
+   * Modo del catálogo, resuelto por la página en el server (lee `?modo=`).
+   * Viene como prop y no del ModoCatalogoContext para que el HTML del server
+   * ya salga con los productos y precios del modo correcto.
+   */
+  modo: Modo;
+  /**
+   * Slugs sin stock EN ESE MODO. Llega como array (no Set/Map) porque cruza el
+   * borde server -> client: lo calcula app/catalogo/page.tsx leyendo la base.
    */
   agotados?: string[];
 }) {
@@ -55,6 +69,9 @@ export default function CatalogoCompleto({
   const searchParams = useSearchParams();
 
   const agotadosSet = useMemo(() => new Set(agotados), [agotados]);
+
+  // Productos del modo activo (lista cacheada: referencia estable por modo).
+  const productos = productosParaModo(modo);
 
   const paramTamano = searchParams.get("tamano");
   const tamanoActivo: Tamano | typeof TODOS = esTamano(paramTamano)
@@ -75,7 +92,11 @@ export default function CatalogoCompleto({
   const paramMarca = searchParams.get("marca");
   const marcaActiva = esMarca(paramMarca) ? paramMarca : undefined;
 
-  const soloOriginales = searchParams.get("original") === "true";
+  // `?casaoriginal=1` = solo fragancias de casa original (`esCasaOriginal`). NO
+  // es el modo del catálogo (ese va en `?modo=`). Antes era `?original=true`;
+  // se renombró para que no se confunda con `?modo=original`.
+  const soloCasasOriginales =
+    searchParams.get(PARAM_CASA_ORIGINAL) === VALOR_CASA_ORIGINAL;
 
   // Escribe/borra un query param preservando los demás.
   const setParam = (clave: string, valor?: string) => {
@@ -94,22 +115,23 @@ export default function CatalogoCompleto({
         genero: generoActivo === TODOS ? undefined : generoActivo,
         tamano: tamanoActivo === TODOS ? undefined : tamanoActivo,
         marca: marcaActiva,
-        soloOriginales,
+        soloCasasOriginales,
       }),
     [
+      productos,
       fabricanteActivo,
       categoriaActiva,
       generoActivo,
       tamanoActivo,
       marcaActiva,
-      soloOriginales,
+      soloCasasOriginales,
     ]
   );
 
   const fabricantesVisibles = fabricantesConProductos(filtrados);
 
   // Cambia con cualquier filtro para re-disparar el stagger de las tarjetas.
-  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${generoActivo}-${fabricanteActivo ?? ""}-${marcaActiva ?? ""}-${soloOriginales}`;
+  const staggerKey = `${tamanoActivo}-${categoriaActiva}-${generoActivo}-${fabricanteActivo ?? ""}-${marcaActiva ?? ""}-${soloCasasOriginales}`;
 
   return (
     <>
@@ -158,7 +180,7 @@ export default function CatalogoCompleto({
 
           {/* Filtros que sólo llegan por link desde la Home: se muestran como
               chips para que se vean y se puedan quitar. */}
-          {(fabricanteActivo || marcaActiva || soloOriginales) && (
+          {(fabricanteActivo || marcaActiva || soloCasasOriginales) && (
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <p className="label-ui text-xs uppercase tracking-wide text-gris-azul">
                 Filtros
@@ -183,10 +205,10 @@ export default function CatalogoCompleto({
                   {marcaActiva} <span aria-hidden="true">✕</span>
                 </button>
               )}
-              {soloOriginales && (
+              {soloCasasOriginales && (
                 <button
                   type="button"
-                  onClick={() => setParam("original", undefined)}
+                  onClick={() => setParam(PARAM_CASA_ORIGINAL, undefined)}
                   className="chip-filtro"
                   aria-label="Quitar filtro de originales"
                 >

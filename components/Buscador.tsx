@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { formatearPrecio, productos } from "@/data/productos";
+import { formatearPrecio } from "@/data/productos";
+import { useModoCatalogo } from "@/context/ModoCatalogoContext";
+import { productosParaModo } from "@/lib/catalogo";
 import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
 import ProductImage from "./ProductImage";
 
@@ -14,8 +16,9 @@ function normalizar(texto: string): string {
     .toLowerCase();
 }
 
-// Buscador del Header. Sin backend: filtra en memoria el array de
-// data/productos.ts por nombre y marca con includes().
+// Buscador del Header. Sin backend: filtra en memoria los productos del modo
+// activo (?modo=, ver ModoCatalogoContext) por nombre y marca con includes().
+// Sin modo elegido busca en G5, lo mismo que vendió siempre la web.
 // El panel se abre debajo de la barra del Header (absolute + top-full sobre el
 // <header> sticky) para no alterar el layout de logo / nav / carrito.
 export default function Buscador() {
@@ -47,6 +50,9 @@ export default function Buscador() {
     if (abierto) inputRef.current?.focus();
   }, [abierto]);
 
+  const { modo, conModo } = useModoCatalogo();
+  const productos = productosParaModo(modo ?? "g5");
+
   const termino = normalizar(consulta.trim());
 
   const resultados = useMemo(() => {
@@ -56,7 +62,7 @@ export default function Buscador() {
         normalizar(p.nombre).includes(termino) ||
         normalizar(p.marca).includes(termino)
     );
-  }, [termino]);
+  }, [termino, productos]);
 
   return (
     <div ref={contenedorRef}>
@@ -108,7 +114,7 @@ export default function Buscador() {
                   {resultados.map((producto) => (
                     <li key={producto.id}>
                       <Link
-                        href={`/producto/${producto.slug}`}
+                        href={conModo(`/producto/${producto.slug}`)}
                         onClick={cerrar}
                         className="buscador-resultado"
                       >

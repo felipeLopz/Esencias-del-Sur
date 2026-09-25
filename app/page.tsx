@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
@@ -8,18 +7,25 @@ import IconoCategoria, {
   type IconoCategoriaNombre,
 } from "@/components/IconoCategoria";
 import Faq from "@/components/Faq";
+import LinkConModo from "@/components/LinkConModo";
 import ProductCard from "@/components/ProductCard";
 import QuizGuia from "@/components/QuizGuia";
 import Reveal from "@/components/Reveal";
-import { productos } from "@/data/productos";
-import { FABRICANTES, FABRICANTE_OTRAS } from "@/data/productos";
+import { FABRICANTES, FABRICANTE_OTRAS, type Producto } from "@/data/productos";
 import { contarPorTamano } from "@/lib/agrupacion";
-import { contarOriginales, contarPorCategoria } from "@/lib/filtros";
+import { PARAM_MODO, productosParaModo, resolverModo } from "@/lib/catalogo";
+import { MODOS_CATALOGO_VISIBLE } from "@/lib/config";
+import {
+  PARAM_CASA_ORIGINAL,
+  VALOR_CASA_ORIGINAL,
+  contarCasasOriginales,
+  contarPorCategoria,
+} from "@/lib/filtros";
 import { getProductosConStock } from "@/lib/stock";
 import { linkConsultaWhatsApp } from "@/lib/whatsapp";
 
 // --------------------------------------------------------------- bloque 4 ---
-// Conteos calculados desde productos.ts, no fijos.
+// Conteos calculados desde los productos del modo activo, no fijos.
 // "Ofertas" y "Novedades" no tienen campo en los datos todavía: van sin número
 // y linkean al catálogo general (ver resumen).
 type Acceso = {
@@ -29,50 +35,56 @@ type Acceso = {
   detalle: string;
 };
 
-const ACCESOS: Acceso[] = [
-  {
-    nombre: "Perfumes grandes",
-    icono: "frasco-grande",
-    href: "/catalogo?tamano=grande",
-    detalle: `${contarPorTamano(productos, "grande")} productos`,
-  },
-  {
-    nombre: "Perfumes chicos",
-    icono: "frasco-chico",
-    href: "/catalogo?tamano=chico",
-    detalle: `${contarPorTamano(productos, "chico")} productos`,
-  },
-  {
-    nombre: "Ofertas",
-    icono: "oferta",
-    href: "/catalogo",
-    detalle: "Próximamente",
-  },
-  {
-    nombre: "Sets regalo",
-    icono: "regalo",
-    href: `/catalogo?categoria=${encodeURIComponent("Sets regalo")}`,
-    detalle: `${contarPorCategoria("Sets regalo")} productos`,
-  },
-  {
-    nombre: "Originales",
-    icono: "original",
-    href: "/catalogo?original=true",
-    detalle: `${contarOriginales()} ${contarOriginales() === 1 ? "producto" : "productos"}`,
-  },
-  {
-    nombre: "Novedades",
-    icono: "novedad",
-    href: "/catalogo",
-    detalle: "Próximamente",
-  },
-  {
-    nombre: "Comparar productos",
-    icono: "comparar",
-    href: "/comparar",
-    detalle: "Hasta 3 productos",
-  },
-];
+// `productos`: los del modo activo (productosParaModo). Los `href` van sin
+// modo: los links (LinkConModo) le agregan el `?modo=` actual si lo hay.
+function accesosPara(productos: Producto[]): Acceso[] {
+  const casasOriginales = contarCasasOriginales(productos);
+
+  return [
+    {
+      nombre: "Perfumes grandes",
+      icono: "frasco-grande",
+      href: "/catalogo?tamano=grande",
+      detalle: `${contarPorTamano(productos, "grande")} productos`,
+    },
+    {
+      nombre: "Perfumes chicos",
+      icono: "frasco-chico",
+      href: "/catalogo?tamano=chico",
+      detalle: `${contarPorTamano(productos, "chico")} productos`,
+    },
+    {
+      nombre: "Ofertas",
+      icono: "oferta",
+      href: "/catalogo",
+      detalle: "Próximamente",
+    },
+    {
+      nombre: "Sets regalo",
+      icono: "regalo",
+      href: `/catalogo?categoria=${encodeURIComponent("Sets regalo")}`,
+      detalle: `${contarPorCategoria("Sets regalo", productos)} productos`,
+    },
+    {
+      nombre: "Originales",
+      icono: "original",
+      href: `/catalogo?${PARAM_CASA_ORIGINAL}=${VALOR_CASA_ORIGINAL}`,
+      detalle: `${casasOriginales} ${casasOriginales === 1 ? "producto" : "productos"}`,
+    },
+    {
+      nombre: "Novedades",
+      icono: "novedad",
+      href: "/catalogo",
+      detalle: "Próximamente",
+    },
+    {
+      nombre: "Comparar productos",
+      icono: "comparar",
+      href: "/comparar",
+      detalle: "Hasta 3 productos",
+    },
+  ];
+}
 
 // Mapa de cobertura: embed de OpenStreetMap encuadrado por bbox (oeste, sur,
 // este, norte). Un `q=` de Google geocodea a UN solo lugar y con `z` fijo no
@@ -82,12 +94,23 @@ const ACCESOS: Acceso[] = [
 const MAPA_BBOX = "-68.905,-32.965,-68.775,-32.855";
 const MAPA_COBERTURA_SRC = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(MAPA_BBOX)}&layer=mapnik`;
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ [clave: string]: string | string[] | undefined }>;
+}) {
+  // Modo de catálogo (?modo=). La Home no pregunta: sin modo en la URL muestra
+  // G5, igual que siempre. Con un param repetido se toma el primero (igual que
+  // useSearchParams().get() en el cliente).
+  const valorModo = [(await searchParams)[PARAM_MODO]].flat()[0];
+  const modo = resolverModo(valorModo, MODOS_CATALOGO_VISIBLE) ?? "g5";
+  const accesos = accesosPara(productosParaModo(modo));
+
   // Bloque 7: los marcados con `destacado: true`; si no hay ninguno, los 3
   // primeros, para que la Home no quede sin productos a la vista.
   // `getProductosConStock` agrega el `disponible` de la base a cada uno: eso
   // es lo que vuelve dinámica la Home (ver lib/stock.ts).
-  const conStock = await getProductosConStock();
+  const conStock = await getProductosConStock(modo);
   const marcados = conStock.filter((p) => p.destacado === true);
   const destacados = marcados.length > 0 ? marcados : conStock.slice(0, 3);
 
@@ -124,12 +147,12 @@ export default async function Home() {
               </p>
 
               <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
-                <Link
+                <LinkConModo
                   href="/catalogo"
                   className="btn-pill btn-primario label-ui px-8 py-3 text-base"
                 >
                   Ver catálogo
-                </Link>
+                </LinkConModo>
                 <a
                   href={waHref}
                   target="_blank"
@@ -157,8 +180,8 @@ export default async function Home() {
             </p>
 
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {ACCESOS.map((a) => (
-                <Link
+              {accesos.map((a) => (
+                <LinkConModo
                   key={a.nombre}
                   href={a.href}
                   className="tarjeta flex items-center gap-4 p-5"
@@ -174,7 +197,7 @@ export default async function Home() {
                       {a.detalle}
                     </span>
                   </span>
-                </Link>
+                </LinkConModo>
               ))}
             </div>
           </Reveal>
@@ -191,13 +214,13 @@ export default async function Home() {
 
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
               {fabricantesReales.map((fabricante) => (
-                <Link
+                <LinkConModo
                   key={fabricante}
                   href={`/catalogo?fabricante=${encodeURIComponent(fabricante)}`}
                   className="marca-chip"
                 >
                   {fabricante}
-                </Link>
+                </LinkConModo>
               ))}
             </div>
           </Reveal>
@@ -230,12 +253,12 @@ export default async function Home() {
                   Nuestra selección para empezar a descubrir la colección.
                 </p>
               </div>
-              <Link
+              <LinkConModo
                 href="/catalogo"
                 className="nav-link label-ui shrink-0 text-sm text-blanco/90 hover:text-blanco"
               >
                 Ver todo →
-              </Link>
+              </LinkConModo>
             </div>
 
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

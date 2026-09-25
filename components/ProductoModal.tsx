@@ -12,10 +12,13 @@ import type { Producto } from "@/data/productos";
 export default function ProductoModal({
   producto,
   disponible = true,
+  aviso,
 }: {
   producto: Producto;
   /** Estado de stock leído de la base (lib/stock.ts). */
   disponible?: boolean;
+  /** Aviso si se muestra otro modo del pedido (ver DetalleProducto). */
+  aviso?: string;
 }) {
   const router = useRouter();
   const cerrar = useCallback(() => router.back(), [router]);
@@ -59,6 +62,7 @@ export default function ProductoModal({
             producto={producto}
             enModal
             disponible={disponible}
+            aviso={aviso}
           />
         </div>
       </div>

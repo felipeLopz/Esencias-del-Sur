@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useComparador } from "@/context/ComparadorContext";
+import { useModoCatalogo } from "@/context/ModoCatalogoContext";
 import { formatearPrecio } from "@/data/productos";
 import { tamanoLabel } from "@/lib/agrupacion";
 import { useOverlayCerrable } from "@/lib/useOverlayCerrable";
@@ -12,6 +13,7 @@ import ProductImage from "./ProductImage";
 // comportamiento que CartDrawer).
 export default function ComparadorModal() {
   const { seleccionados, modalAbierto, cerrarModal, quitar } = useComparador();
+  const { conModo } = useModoCatalogo();
 
   useOverlayCerrable(modalAbierto, cerrarModal);
 
@@ -97,7 +99,7 @@ export default function ComparadorModal() {
                       </div>
                       <p className="mt-3 font-cinzel text-base font-normal text-blanco">
                         <Link
-                          href={`/producto/${producto.slug}`}
+                          href={conModo(`/producto/${producto.slug}`)}
                           onClick={cerrarModal}
                         >
                           {producto.nombre}

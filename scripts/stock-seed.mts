@@ -27,6 +27,20 @@ const esquema = readFileSync(new URL("../db/0001_stock.sql", import.meta.url), "
 await sql.query(esquema);
 console.log("Tabla productos_stock lista.");
 
+// Migraciones posteriores a 0001. El driver HTTP ejecuta un statement por
+// query, así que cada archivo se parte en sus statements (terminan en `;` a fin
+// de línea) y se corren juntos en una transacción. Son idempotentes.
+for (const archivo of ["0002_stock_por_modo.sql"]) {
+  const texto = readFileSync(new URL(`../db/${archivo}`, import.meta.url), "utf8");
+  const statements = texto
+    .replace(/^\s*--.*$/gm, "")
+    .split(/;\s*$/m)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  await sql.transaction(statements.map((s) => sql.query(s)));
+  console.log(`Migración ${archivo} aplicada.`);
+}
+
 const slugs = productos.map((p) => p.slug);
 const duplicados = slugs.filter((s, i) => slugs.indexOf(s) !== i);
 if (duplicados.length > 0) {

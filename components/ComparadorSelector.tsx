@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { productos } from "@/data/productos";
 import { useComparador } from "@/context/ComparadorContext";
+import { useModoCatalogo } from "@/context/ModoCatalogoContext";
+import { productosParaModo } from "@/lib/catalogo";
 import CompararButton from "./CompararButton";
 import ProductImage from "./ProductImage";
 
@@ -24,6 +25,12 @@ export default function ComparadorSelector() {
   const [consulta, setConsulta] = useState("");
   const { seleccionados, maximo } = useComparador();
 
+  // Productos del modo activo (?modo=). Sin modo elegido, G5: lo de siempre.
+  // /comparar es estática: el HTML del build sale siempre en G5 y, si la URL
+  // trae otro modo, la grilla se actualiza al cargar en el navegador.
+  const { modo } = useModoCatalogo();
+  const productos = productosParaModo(modo ?? "g5");
+
   const termino = normalizar(consulta.trim());
 
   const resultados = useMemo(() => {
@@ -34,7 +41,7 @@ export default function ComparadorSelector() {
         normalizar(p.marca).includes(termino) ||
         (p.categoria && normalizar(p.categoria).includes(termino))
     );
-  }, [termino]);
+  }, [termino, productos]);
 
   return (
     <div>
@@ -73,7 +80,7 @@ export default function ComparadorSelector() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 33vw, 25vw"
                   className="object-contain"
                 />
-                {producto.original && (
+                {producto.esCasaOriginal && (
                   <span className="badge-original absolute left-2.5 top-2.5 z-10">
                     Original
                   </span>

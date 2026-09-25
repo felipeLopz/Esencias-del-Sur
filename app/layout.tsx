@@ -3,7 +3,9 @@ import { Cinzel, Cormorant_Garamond, EB_Garamond } from "next/font/google";
 import "./globals.css";
 import { CarritoProvider } from "@/context/CarritoContext";
 import { ComparadorProvider } from "@/context/ComparadorContext";
+import { ModoCatalogoProvider } from "@/context/ModoCatalogoContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { MODOS_CATALOGO_VISIBLE } from "@/lib/config";
 import BarraPromo from "@/components/BarraPromo";
 import CartDrawer from "@/components/CartDrawer";
 import BarraComparacion from "@/components/BarraComparacion";
@@ -59,11 +61,16 @@ export default function RootLayout({
           <CarritoProvider>
             <ComparadorProvider>
               <BarraPromo />
-              {children}
-              {modal}
-              <CartDrawer />
-              <BarraComparacion />
-              <ComparadorModal />
+              {/* Modo de catálogo (?modo=) para toda la app: páginas, modal de
+                  producto, carrito y comparador. Trae su propio <Suspense>
+                  (ver context/ModoCatalogoContext.tsx). */}
+              <ModoCatalogoProvider modosVisibles={MODOS_CATALOGO_VISIBLE}>
+                {children}
+                {modal}
+                <CartDrawer />
+                <BarraComparacion />
+                <ComparadorModal />
+              </ModoCatalogoProvider>
             </ComparadorProvider>
           </CarritoProvider>
         </ThemeProvider>

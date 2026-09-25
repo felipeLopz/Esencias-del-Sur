@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BotonFlotante from "@/components/BotonFlotante";
 import DetalleProducto from "@/components/DetalleProducto";
+import LinkConModo from "@/components/LinkConModo";
 import { getProductoPorSlug } from "@/data/productos";
-import { getProductoConStock } from "@/lib/stock";
+import { PARAM_MODO, resolverModo } from "@/lib/catalogo";
+import { MODOS_CATALOGO_VISIBLE } from "@/lib/config";
+import { getFichaConStock } from "@/lib/stock";
 
 // Antes había `generateStaticParams` y las 48 fichas se prerenderizaban. Ya no:
 // el estado agotado/disponible se lee de la base en cada visita, así que la
@@ -28,12 +30,21 @@ export async function generateMetadata({
 
 export default async function ProductoPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [clave: string]: string | string[] | undefined }>;
 }) {
   const { slug } = await params;
-  const producto = await getProductoConStock(slug);
-  if (!producto) notFound();
+
+  // Modo pedido por la URL. La ficha no pregunta: sin modo, G5 (lo de siempre).
+  // Si el perfume no se vende en ese modo se muestra el otro con un aviso, no
+  // un 404 (ver resolverFicha en lib/catalogo.ts).
+  const valorModo = [(await searchParams)[PARAM_MODO]].flat()[0];
+  const modoPedido = resolverModo(valorModo, MODOS_CATALOGO_VISIBLE) ?? "g5";
+  const ficha = await getFichaConStock(slug, modoPedido);
+  if (!ficha) notFound();
+  const { producto, aviso } = ficha;
 
   return (
     <>
@@ -41,17 +52,18 @@ export default async function ProductoPage({
 
       <main className="bg-azul-osc">
         <div className="mx-auto max-w-6xl px-5 py-16">
-          <Link
+          <LinkConModo
             href="/catalogo"
             className="label-ui text-sm text-gris-azul hover:text-blanco"
           >
             ← Volver al catálogo
-          </Link>
+          </LinkConModo>
 
           <div className="mt-8">
             <DetalleProducto
               producto={producto}
               disponible={producto.disponible}
+              aviso={aviso}
             />
           </div>
         </div>

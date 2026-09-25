@@ -9,7 +9,12 @@ import {
   useState,
 } from "react";
 import type { Producto } from "@/data/productos";
+import { normalizarProductoGuardado } from "@/lib/catalogo";
 
+// Cada ítem guarda el `Producto` YA resuelto en su modo (y, si es un decant, el
+// objeto que arma `decantDe`): precio, `modo` y un `id` único por modo y por
+// presentación. Por eso conviven sin chocar el mismo perfume en G5 y en
+// Original, y el frasco y el decant del mismo perfume (ver lib/catalogo.ts).
 export interface ItemCarrito {
   producto: Producto;
   cantidad: number;
@@ -46,7 +51,16 @@ export function CarritoProvider({ children }: { children: React.ReactNode }) {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setItems(parsed as ItemCarrito[]);
+        // Los carritos guardados antes de los modos no traen `modo`,
+        // `idBase` ni `precios`: se completan como G5 (lo único que existía).
+        if (Array.isArray(parsed)) {
+          setItems(
+            (parsed as ItemCarrito[]).map((i) => ({
+              ...i,
+              producto: normalizarProductoGuardado(i.producto),
+            }))
+          );
+        }
       }
     } catch {
       // localStorage no disponible o JSON inválido — se arranca vacío.

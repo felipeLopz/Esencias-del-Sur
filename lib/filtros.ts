@@ -40,13 +40,26 @@ export function esGenero(valor: string | null | undefined): valor is Genero {
   return !!valor && (GENEROS as string[]).includes(valor);
 }
 
+/**
+ * Query param del filtro "solo casas originales": `/catalogo?casaoriginal=1`.
+ * Antes era `?original=true`; se renombró porque se confundía con el modo del
+ * catálogo (`?modo=original`), que es otra cosa. Lo genera la card
+ * "Originales" de la Home y lo lee CatalogoCompleto.
+ */
+export const PARAM_CASA_ORIGINAL = "casaoriginal";
+export const VALOR_CASA_ORIGINAL = "1";
+
 export interface FiltrosCatalogo {
   fabricante?: Fabricante;
   categoria?: Categoria;
   marca?: Marca;
   genero?: Genero;
   tamano?: Tamano;
-  soloOriginales?: boolean;
+  /**
+   * Solo fragancias de casa original (`esCasaOriginal`). No tiene nada que ver
+   * con el modo "original" del catálogo. En la URL: `?casaoriginal=1`.
+   */
+  soloCasasOriginales?: boolean;
 }
 
 export function aplicarFiltros(
@@ -57,7 +70,7 @@ export function aplicarFiltros(
     marca,
     genero,
     tamano,
-    soloOriginales,
+    soloCasasOriginales,
   }: FiltrosCatalogo
 ): Producto[] {
   return lista.filter(
@@ -67,7 +80,7 @@ export function aplicarFiltros(
       (!marca || p.marca === marca) &&
       (!genero || p.genero === genero) &&
       (!tamano || tamanoDe(p) === tamano) &&
-      (!soloOriginales || p.original === true)
+      (!soloCasasOriginales || p.esCasaOriginal === true)
   );
 }
 
@@ -78,12 +91,17 @@ export { esTamano };
 // ---------------------------------------------------------------- conteos ---
 // Se calculan desde `productos`, no son números fijos.
 
-export function contarPorCategoria(categoria: Categoria): number {
-  return productos.filter((p) => p.categoria === categoria).length;
+// `lista`: los productos del modo (productosParaModo). Por defecto `productos`,
+// que es la vista G5.
+export function contarPorCategoria(
+  categoria: Categoria,
+  lista: Producto[] = productos
+): number {
+  return lista.filter((p) => p.categoria === categoria).length;
 }
 
-export function contarOriginales(): number {
-  return productos.filter((p) => p.original === true).length;
+export function contarCasasOriginales(lista: Producto[] = productos): number {
+  return lista.filter((p) => p.esCasaOriginal === true).length;
 }
 
 export function contarTodos(): number {
